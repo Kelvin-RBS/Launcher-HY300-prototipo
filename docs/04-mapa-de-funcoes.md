@@ -11,6 +11,10 @@ Estado: **Verificado** = testado no aparelho via ADB · **Listado** = visto no m
 | Entrada de sinal (htcsettings) | `com.htc.activity.SignalActivity` | Abre painel só com "Fechar". Sem utilidade por ora |
 | Broadcasts `intent.start.projectton` e `intent.start.signal` | `am broadcast -a ...` | Entregues (`result=0`). Efeito **não confirmado** |
 | Wi-Fi, Bluetooth, som, idioma, data, brilho, hotspot, protetor de tela, outros ajustes, sobre | `WIFIActivity`, `BluetoothSettingActivity`, `SoundChannelActivity`, `LanguageActivity`, `DateTimeActivity`, `ScreenBrightnessActivity`, `HotspotActivity`, `ScreenSaverActivity`, `OtherSettingsActivity`, `AboutDeviceActivity` | Listado (exportadas). Nomes exatos a confirmar |
+| Arquivos (interno e pendrive) | `com.softwinner.TvdFileManager` | Pacote listado em `apps_sistema.txt`; activity a confirmar. Detecção de pendrive: `StorageManager` / `ACTION_MEDIA_MOUNTED` |
+| Rede (ícone do topo) | `WIFIActivity` | Listado |
+| Bluetooth (ícone do topo) | `BluetoothSettingActivity` | Listado |
+| Configurações (engrenagem) | tela principal do `com.htc.htcsettings` | Activity a confirmar |
 | Espelhamento | `com.softwinner.miracastReceiver` | Listado |
 
 ## Não usar (podem alterar calibração ou apagar dados)
