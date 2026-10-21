@@ -1,0 +1,9 @@
+# Dados do aparelho: software proprietário e identificadores
+*.apk
+props.txt
+*_dump.txt
+settings_*.txt
+apps_*.txt
+tv_input.txt
+*.png
+!prototype/assets/*

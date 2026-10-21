@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Launcher HY300 — protótipo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap">
+<style>
+:root{color-scheme:dark;--bg:#05080f;--tx:#EAF1FF;--mu:#A9B8D2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);font-family:Roboto,system-ui,sans-serif;overflow:hidden}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{width:1280px;height:720px;flex:none;position:relative;overflow:hidden;border-radius:12px;background:#0a1020}
+#stage>#bg,#shade{position:absolute;inset:0;width:100%;height:100%}#bg{object-fit:cover}
+#shade{background:linear-gradient(90deg,rgba(4,8,16,.88) 0%,rgba(4,8,16,.45) 52%,rgba(4,8,16,.05) 100%),linear-gradient(0deg,rgba(4,8,16,.92) 0%,rgba(4,8,16,0) 55%)}
+#top{position:absolute;top:32px;right:56px;display:flex;gap:20px;align-items:center;font-size:26px;font-weight:500}
+#top svg{width:26px;height:26px;fill:none;stroke:var(--tx);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#info{position:absolute;left:64px;top:170px;width:700px;transition:opacity .15s}
+#info.f{opacity:0}
+.eyebrow{font-size:16px;letter-spacing:.24em;color:var(--mu);font-weight:500}
+#title{font-size:76px;font-weight:500;margin:14px 0 18px;letter-spacing:-.01em}
+#desc{font-size:27px;color:#D5DFF2}
+#lab{position:absolute;left:64px;top:470px;font-size:20px;font-weight:500}
+#hint{position:absolute;right:64px;top:474px;font-size:16px;color:var(--mu)}
+#row{position:absolute;left:64px;top:512px;width:1152px;height:190px;overflow:visible;clip-path:inset(-30px 0 -10px 0)}
+#track{display:flex;gap:18px;transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.it{flex:none;width:168px;text-align:center;font-size:17px;color:#C5D2EA;cursor:pointer}
+.tile{height:100px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;border:2px solid transparent;transition:transform .15s,box-shadow .15s,border-color .15s}
+.it.on{color:#fff;font-weight:700}
+.it.on .tile{transform:scale(1.1);border-color:#E3EEFF;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+.tile svg{width:44px;height:44px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tile b{font-size:38px;font-weight:700}
+#toast{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(10,16,32,.92);border:1px solid #2A3B5C;padding:10px 20px;border-radius:999px;font-size:18px;opacity:0;transition:opacity .2s}
+#toast.s{opacity:1}
+#snd{position:absolute;left:64px;top:32px;background:rgba(10,16,32,.7);color:var(--tx);border:1px solid #2A3B5C;border-radius:999px;padding:8px 16px;font:500 15px Roboto,sans-serif;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="stage">
+<img id="bg" src="assets/wallpaper.jpg" alt="">
+<div id="shade"></div>
+<button id="snd" type="button">Som: ligado</button>
+<div id="top">
+<svg viewBox="0 0 24 24" role="img" aria-label="Wi-Fi"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1"/></svg>
+<svg viewBox="0 0 24 24" role="img" aria-label="Bluetooth"><path d="M7 7l10 10-5 4V3l5 4L7 17"/></svg>
+<span id="clk">14:57</span>
+</div>
+<div id="info"><div class="eyebrow">MEU PROJETOR</div><div id="title"></div><div id="desc"></div></div>
+<div id="lab">Favoritos</div>
+<div id="hint">← → navegar · Enter abrir · M som</div>
+<div id="row"><div id="track"></div></div>
+<div id="toast" role="status"></div>
+</div>
+</div>
+<script>
+var P={hdmi:'<path d="M3 7h18v6l-3 4H6l-3-4zM8 11h8"/>',prj:'<path d="M7 5h10l3 14H4z"/>',img:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',cast:'<path d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6M3 11a8 8 0 0 1 8 8M3 15a4 4 0 0 1 4 4"/><circle cx="3.5" cy="19.5" r="1"/>',app:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',set:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3.2"/>'};
+var items=[
+{n:'HDMI',d:'Entrada externa: videogame, notebook ou TV box.',bg:'#2F5DA8',i:P.hdmi},
+{n:'Projeção',d:'Keystone, zoom e método de projeção.',bg:'#3A4A63',i:P.prj},
+{n:'Imagem',d:'Modo de imagem, brilho e cor.',bg:'#5B4B8A',i:P.img},
+{n:'Netflix',d:'Séries e filmes.',bg:'#141414',l:'N',c:'#E5484D'},
+{n:'YouTube',d:'Vídeos e canais.',bg:'#F4F4F4',l:'Y',c:'#D32F2F'},
+{n:'Espelhar',d:'Transmita a tela do celular.',bg:'#1F7A8C',i:P.cast},
+{n:'Apps',d:'Todos os apps instalados.',bg:'#2B3552',i:P.app},
+{n:'Ajustes',d:'Wi-Fi, Bluetooth, idioma e mais.',bg:'#44546F',i:P.set}];
+var cur=0,muted=false,ac,tr=document.getElementById('track'),info=document.getElementById('info'),ti=document.getElementById('title'),de=document.getElementById('desc'),toast=document.getElementById('toast'),tt;
+items.forEach(function(it,k){var e=document.createElement('div');e.className='it';e.innerHTML='<div class="tile" style="background:'+it.bg+'">'+(it.i?'<svg viewBox="0 0 24 24" aria-hidden="true">'+it.i+'</svg>':'<b style="color:'+it.c+'">'+it.l+'</b>')+'</div>'+it.n;e.onclick=function(){if(k===cur){open_()}else{go(k)}};tr.appendChild(e)});
+function snd(f,d,v){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();var t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*.7,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+.02)}catch(x){}}
+function show(){var ts=tr.children;for(var k=0;k<ts.length;k++)ts[k].classList.toggle('on',k===cur);var max=items.length*186-18-1152,off=Math.max(0,Math.min((cur-1)*186,max));tr.style.transform='translateX('+(-off)+'px)';info.classList.add('f');setTimeout(function(){ti.textContent=items[cur].n;de.textContent=items[cur].d;info.classList.remove('f')},110)}
+function go(k){if(k<0||k>=items.length){snd(520,.06,.12);return}snd(k>cur?1900:1650,.05,.2);cur=k;show()}
+function say(m){toast.textContent=m;toast.classList.add('s');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('s')},1700)}
+function open_(){snd(900,.1,.25);say('No projetor, abriria: '+items[cur].n)}
+document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();go(cur+1)}else if(e.key==='ArrowLeft'){e.preventDefault();go(cur-1)}else if(e.key==='Enter'||e.key===' '){e.preventDefault();open_()}else if(e.key==='m'||e.key==='M'){tg()}});
+var sb=document.getElementById('snd');function tg(){muted=!muted;sb.textContent='Som: '+(muted?'desligado':'ligado')}sb.onclick=tg;
+function fit(){var s=Math.min(innerWidth/1280,innerHeight/720);document.getElementById('stage').style.transform='scale('+s+')'}
+addEventListener('resize',fit);fit();
+function clk(){var d=new Date();document.getElementById('clk').textContent=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}clk();setInterval(clk,20000);
+ti.textContent=items[0].n;de.textContent=items[0].d;show();
+</script>
+</body>
+</html>
