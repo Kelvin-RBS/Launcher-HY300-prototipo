@@ -23,6 +23,9 @@
 - Nome da activity do gerenciador de arquivos (`TvdFileManager`) e da tela principal do `htcsettings`.
 - (Feito para o `htcsettings`) Descompilar o `htcsettings` com JADX (instruções de configuração do `REA_JADX_MCP_JAR`: JDK 17+, JAR `jadx-headless-mcp` 0.7.1 e variável de ambiente definida antes de abrir o programa que roda o rea).
 
+## Atualização do launcher
+Plano em `12-atualizacao-do-launcher-pelo-github.md`: o launcher se atualiza por Releases do GitHub, sem mexer no firmware. Decisão: **continuar pelo launcher por enquanto**, por ser mais seguro.
+
 ## Futuro: firmware próprio
 A ideia de longo prazo é **trocar o firmware** do projetor. Por enquanto o launcher é instalado como app e o original continua no aparelho.
 Antes de qualquer troca:

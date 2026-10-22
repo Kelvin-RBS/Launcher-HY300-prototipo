@@ -38,5 +38,5 @@ Não exportadas: `VolumeActivity` e `AudioActivity`. O volume pelo launcher usar
 ## Cuidado
 `CorrectActivity` é exportada, mas abre uma tela interativa de correção que grava arquivo. **Ainda não foi aberta no aparelho.** Teste só quando você quiser, sabendo que pode alterar a calibração.
 
-## Próximas análises
-`UpdateActivity` e `SystemUpdateActivity` (atualização local e online), `AboutDeviceActivity` (de onde vêm serial e MAC) e `com.softwinner.awlivetv` (entrada HDMI).
+## Análises seguintes
+Atualização e "Sobre": ver `11-atualizacao-e-sobre.md`. Pendente: `com.softwinner.awlivetv` (entrada HDMI) e `com.htc.htcotaupdate`.

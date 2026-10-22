@@ -51,11 +51,11 @@ Abra o [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo
 |---|---|
 | `prototype/` | Protótipo navegável (1280×720) |
 | `docs/` | Aparelho, extração, análise do original, mapa de funções, design, roadmap, configurações, jogos e RetroArch |
-| `scripts/` | Scripts PowerShell (ADB) para extrair dados, testar telas e instalar o RetroArch |
+| `scripts/` | Scripts PowerShell (ADB) para extrair dados, testar telas, instalar o RetroArch e gerar o `latest.json` |
 | `retroarch/` | Configuração de exemplo do RetroArch para o projetor |
 | `android/` | Reservado para o projeto Kotlin |
 
-Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`CHANGELOG.md`](CHANGELOG.md)
+Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Resumo das descobertas
 - O launcher original (`com.htc.htclauncherhighenglishd08`, v1.4.5) é só uma grade de apps. Roda como app de sistema e **não** controla keystone, foco ou imagem.
@@ -63,13 +63,15 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 - **HDMI** abre com `com.softwinner.awlivetv/.MainActivity` (testado).
 - **Zoom, método de projeção e keystone** não abrem direto (activities não exportadas). O caminho é abrir a Projeção e escolher o cartão. **Brilho e cor** abre direto.
 - O aparelho tem **uma** porta HDMI física, mas o sistema declara três HDMI e um AV. O launcher mostra só "HDMI".
+- **Atualização local** (pendrive) dispara um serviço de sistema (`android.rockchip.update.service`); a **online** é delegada ao `com.htc.htcotaupdate`. O launcher novo abre as telas originais ([`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md)).
+- O próprio app de configurações (`htcsettings`) também tem analytics da Baidu; só um firmware próprio remove.
 - Sem bateria: as telas de bateria baixa não entram.
 - Rastreamento no original: analytics da Baidu e API de loja da fabricante. O launcher novo não inclui nada disso.
 
 ## Próximos passos
 1. Instalar o RetroArch de 32 bits no projetor e testar um jogo de Super Nintendo ([`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md)).
 2. Descobrir como abrir o RetroArch por intent e aplicar a configuração sem toque.
-3. Escrever o projeto Android (Kotlin, sem bibliotecas pesadas).
+3. Escrever o projeto Android (Kotlin, sem bibliotecas pesadas), com atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
 4. Instalar no aparelho, definir como padrão e validar HDMI e Projeção.
 5. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 

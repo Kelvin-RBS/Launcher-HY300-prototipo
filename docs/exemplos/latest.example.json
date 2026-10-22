@@ -1,0 +1,10 @@
+{
+  "versionCode": 2,
+  "versionName": "0.2.0",
+  "apkUrl": "https://github.com/Kelvin-RBS/Launcher-HY300-prototipo/releases/download/v0.2.0/launcher.apk",
+  "sha256": "SUBSTITUA_PELO_SHA256_DO_APK",
+  "sizeBytes": 0,
+  "minAndroid": 30,
+  "publishedAt": "2026-01-01T00:00:00Z",
+  "notes": "Exemplo. Descreva aqui o que mudou nesta versão."
+}

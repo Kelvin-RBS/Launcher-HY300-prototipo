@@ -1,5 +1,14 @@
 # Changelog
 
+## v9
+- Plano de atualização do **launcher** pelo GitHub (Releases + `latest.json` no Pages): `docs/12`, exemplo em `docs/exemplos/` e script `scripts/04-gerar-latest-json.ps1`.
+- Decisão registrada: seguir pelo launcher por enquanto; firmware próprio fica para depois.
+
+## v8
+- Protótipo: ícone de Configurações trocado por uma **engrenagem** de 8 dentes.
+- Nova análise: atualização local e online, e origem dos dados de "Sobre o dispositivo" (`docs/11`).
+- Achado: o `htcsettings` também tem analytics da Baidu.
+
 ## v7
 - JADX configurado no REA. Primeira decompilação: `com.htc.htcsettings` (`docs/10-analise-htcsettings.md`).
 - Mapeados os cartões da tela de Projeção e quais activities são exportadas.
