@@ -9,7 +9,7 @@ Um launcher novo, leve e com visual tecnológico para o projetor **HY300** (Andr
 ## Como este projeto é feito
 A ideia é usar **IA** e **REA** do começo ao fim:
 - **IA (Claude, da Anthropic):** análise dos dados do aparelho, documentação, protótipo e, mais adiante, o código do launcher.
-- **REA (Reverse Engineer Anything):** ferramenta de engenharia reversa usada para analisar os apps do aparelho. Até agora, parte da análise do APK foi feita direto pelo manifest e pelas strings, porque o módulo Android do REA exige o JAR do JADX, que ainda não foi configurado.
+- **REA (Reverse Engineer Anything):** ferramenta de engenharia reversa usada para analisar os apps do aparelho. O módulo Android do REA (com JADX) já está configurado e foi usado para decompilar o `com.htc.htcsettings`: a tela de Projeção já foi mapeada ([`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md)).
 
 O autor define o rumo, testa no aparelho e decide o que entra.
 
@@ -55,13 +55,13 @@ Abra o [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo
 | `retroarch/` | Configuração de exemplo do RetroArch para o projetor |
 | `android/` | Reservado para o projeto Kotlin |
 
-Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`CHANGELOG.md`](CHANGELOG.md)
+Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Resumo das descobertas
 - O launcher original (`com.htc.htclauncherhighenglishd08`, v1.4.5) é só uma grade de apps. Roda como app de sistema e **não** controla keystone, foco ou imagem.
 - Essas funções ficam no `com.htc.htcsettings`. O launcher novo abre as telas originais por intent.
 - **HDMI** abre com `com.softwinner.awlivetv/.MainActivity` (testado).
-- **Keystone** não abre direto (`Permission Denial`). O caminho é Projeção → Correção de Keystone.
+- **Zoom, método de projeção e keystone** não abrem direto (activities não exportadas). O caminho é abrir a Projeção e escolher o cartão. **Brilho e cor** abre direto.
 - O aparelho tem **uma** porta HDMI física, mas o sistema declara três HDMI e um AV. O launcher mostra só "HDMI".
 - Sem bateria: as telas de bateria baixa não entram.
 - Rastreamento no original: analytics da Baidu e API de loja da fabricante. O launcher novo não inclui nada disso.

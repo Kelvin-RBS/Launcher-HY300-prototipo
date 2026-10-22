@@ -22,4 +22,4 @@ Quase todo o código são bibliotecas (Jackson, Glide, OkHttp, Baidu), pesadas p
 > Pelas strings não dá para afirmar **o que** é enviado, só que o código existe. O launcher novo não inclui nada disso.
 
 ## O que não foi analisado
-O código do launcher não foi descompilado. O módulo Android do `rea` exige o JAR do `jadx-headless-mcp` (variável `REA_JADX_MCP_JAR`), que não estava configurado. A análise usou manifest, strings do `classes.dex` e dumps do `dumpsys`.
+O código do **launcher original** ainda não foi descompilado: a análise dele usou manifest, strings do `classes.dex` e dumps do `dumpsys`. O JADX do REA já está configurado e foi usado no `htcsettings` (ver `10-analise-htcsettings.md`).

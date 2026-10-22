@@ -21,7 +21,7 @@
 - Se existe parâmetro para abrir o keystone direto pela `ProjectionActivity`.
 - Nomes exatos das activities de Wi-Fi, Bluetooth, som etc.
 - Nome da activity do gerenciador de arquivos (`TvdFileManager`) e da tela principal do `htcsettings`.
-- Descompilar o `htcsettings` com JADX (instruções de configuração do `REA_JADX_MCP_JAR`: JDK 17+, JAR `jadx-headless-mcp` 0.7.1 e variável de ambiente definida antes de abrir o programa que roda o rea).
+- (Feito para o `htcsettings`) Descompilar o `htcsettings` com JADX (instruções de configuração do `REA_JADX_MCP_JAR`: JDK 17+, JAR `jadx-headless-mcp` 0.7.1 e variável de ambiente definida antes de abrir o programa que roda o rea).
 
 ## Futuro: firmware próprio
 A ideia de longo prazo é **trocar o firmware** do projetor. Por enquanto o launcher é instalado como app e o original continua no aparelho.

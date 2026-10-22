@@ -1,5 +1,11 @@
 # Changelog
 
+## v7
+- JADX configurado no REA. Primeira decompilação: `com.htc.htcsettings` (`docs/10-analise-htcsettings.md`).
+- Mapeados os cartões da tela de Projeção e quais activities são exportadas.
+- Correção: o cartão de keystone abre `CorrectionIndexActivity`, e não `KeystonecorrectionActivity`.
+- Anotado que o original usa `sound_effects_enabled` para o bip.
+
 ## v6
 - README: link do protótipo online no topo, seção "Como este projeto é feito" (IA e REA), aviso de firmware futuro, "por enquanto" no original, créditos corrigidos (fundo gerado por IA) e removida a menção ao vídeo de inspiração.
 - `index.html` na raiz para publicar o protótipo no GitHub Pages.
