@@ -16,6 +16,9 @@ Uma área fixa de jogos de 16 bits (Super Nintendo, Mega Drive etc.) usando o **
 - **Jogos (ROMs):** o repositório não inclui nenhum. Use apenas jogos que você tem direito de usar.
 - **Atraso do áudio:** áudio por Bluetooth costuma ter atraso e pode atrapalhar jogos. Teste com o alto-falante do aparelho ou fone com fio (saída P2).
 
+## Instalação e otimização
+Ver [`09-retroarch-otimizado.md`](09-retroarch-otimizado.md). A versão de 32 bits (`RetroArch_ra32.apk`) usa o pacote `com.retroarch.ra32`, e não `com.retroarch`.
+
 ## Próximos passos
 1. Instalar o RetroArch (32 bits) no projetor e testar um núcleo de Super Nintendo.
 2. Descobrir pacote e activity reais por `adb shell pm list packages` e `dumpsys package`.

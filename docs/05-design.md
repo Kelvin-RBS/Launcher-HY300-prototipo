@@ -3,7 +3,7 @@
 ## Decisões
 - **Tela de 1280×720**, controle por **direcional + OK** (sem toque). Foco sempre visível.
 - Estrutura: título e descrição do item em foco, fileira "Favoritos" com cartões coloridos, cartão em foco ampliado com borda clara. Relógio e ícones de status no topo.
-- **Plano de fundo:** paisagem de lago ao pôr do sol (imagem do autor), com degradê escuro à esquerda e embaixo para manter o texto legível.
+- **Plano de fundo:** paisagem de lago ao pôr do sol (imagem gerada por IA), com degradê escuro à esquerda e embaixo para manter o texto legível.
 - **Poucos elementos**, tipografia grande (Roboto) e animações curtas: o hardware é limitado.
 - **Fileira de atalhos:** até **5 atalhos editáveis** à esquerda, **somente de apps instalados**, seguidos de **4 atalhos fixos**, que não podem ser removidos nem movidos: **Jogos** (ícone de controle estilo Super Nintendo), **Arquivos**, **HDMI** e **Gerenciar atalhos**. Os fixos não têm cadeado nem marca especial.
 - **Topo:** **Rede**, **Bluetooth** e **Configurações** (engrenagem), todos focáveis. Rede e Bluetooth abrem a página correspondente das Configurações; a engrenagem abre a lista completa. O relógio segue o fuso e o formato de hora escolhidos.

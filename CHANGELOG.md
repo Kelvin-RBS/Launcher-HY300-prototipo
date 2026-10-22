@@ -1,5 +1,11 @@
 # Changelog
 
+## v6
+- README: link do protótipo online no topo, seção "Como este projeto é feito" (IA e REA), aviso de firmware futuro, "por enquanto" no original, créditos corrigidos (fundo gerado por IA) e removida a menção ao vídeo de inspiração.
+- `index.html` na raiz para publicar o protótipo no GitHub Pages.
+- RetroArch: plano de instalação e otimização sem toque (`docs/09`), configuração de exemplo (`retroarch/`) e script de instalação (`scripts/03`).
+- Roadmap: seção de firmware próprio.
+
 ## v5
 - README reescrito com a visão de **projetor gamer** e a lista atual de recursos.
 
