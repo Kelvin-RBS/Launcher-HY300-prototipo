@@ -1,5 +1,13 @@
 # Changelog
 
+## v11
+- Primeira versão do **projeto Android** (`android/`): tela inicial, até 5 atalhos de apps com o banner ou ícone do próprio app, atalhos fixos (Jogos, Arquivos, HDMI, Gerenciar atalhos), menu da engrenagem e tela Gerenciar atalhos.
+- Guia de Android Studio em `android/README.md` e arquitetura em `docs/13-projeto-android.md`.
+- Ainda não compilado nem testado no aparelho.
+
+## v10
+- Como criar a chave de assinatura do launcher (`docs/12`) e `.gitignore` bloqueando chaves e arquivos locais do Android.
+
 ## v9
 - Plano de atualização do **launcher** pelo GitHub (Releases + `latest.json` no Pages): `docs/12`, exemplo em `docs/exemplos/` e script `scripts/04-gerar-latest-json.ps1`.
 - Decisão registrada: seguir pelo launcher por enquanto; firmware próprio fica para depois.

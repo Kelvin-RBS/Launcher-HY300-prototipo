@@ -4,7 +4,7 @@
 
 Um launcher novo, leve e com visual tecnológico para o projetor **HY300** (Android 11, Allwinner H713), mantendo as funções do original e com o objetivo de transformá-lo em um **projetor gamer**.
 
-> **Status:** protótipo de design navegável + análise técnica do launcher original. O projeto Android (Kotlin) e a integração com jogos ainda **não** foram escritos.
+> **Status:** protótipo de design navegável, análise técnica do launcher original e **primeira versão (0.1) do projeto Android**, ainda **não compilada nem testada no aparelho**. A integração com jogos ainda não foi escrita.
 
 ## Como este projeto é feito
 A ideia é usar **IA** e **REA** do começo ao fim:
@@ -53,9 +53,9 @@ Abra o [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo
 | `docs/` | Aparelho, extração, análise do original, mapa de funções, design, roadmap, configurações, jogos e RetroArch |
 | `scripts/` | Scripts PowerShell (ADB) para extrair dados, testar telas, instalar o RetroArch e gerar o `latest.json` |
 | `retroarch/` | Configuração de exemplo do RetroArch para o projetor |
-| `android/` | Reservado para o projeto Kotlin |
+| `android/` | Projeto Android (Kotlin) do launcher, v0.1. Guia de uso em `android/README.md` |
 
-Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`CHANGELOG.md`](CHANGELOG.md)
+Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`docs/13-projeto-android.md`](docs/13-projeto-android.md) · [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Resumo das descobertas
 - O launcher original (`com.htc.htclauncherhighenglishd08`, v1.4.5) é só uma grade de apps. Roda como app de sistema e **não** controla keystone, foco ou imagem.
@@ -71,7 +71,7 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 ## Próximos passos
 1. Instalar o RetroArch de 32 bits no projetor e testar um jogo de Super Nintendo ([`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md)).
 2. Descobrir como abrir o RetroArch por intent e aplicar a configuração sem toque.
-3. Escrever o projeto Android (Kotlin, sem bibliotecas pesadas), com atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
+3. Compilar e testar o projeto Android no projetor ([`android/README.md`](android/README.md)), depois as telas próprias de Configurações e a atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
 4. Instalar no aparelho, definir como padrão e validar HDMI e Projeção.
 5. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 

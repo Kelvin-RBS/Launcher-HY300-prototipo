@@ -34,6 +34,20 @@ Use o Pages (arquivo estático) e não a API do GitHub para a consulta, porque a
 3. Na pasta do repositório, rode `scripts/04-gerar-latest-json.ps1` (ele calcula o SHA-256 e escreve o `latest.json`).
 4. Faça `git add`, `commit` e `push`. O Pages publica o arquivo em instantes.
 
+## Criar a chave de assinatura (uma vez só)
+A chave **ainda não existe**: você a cria. O JDK já traz a ferramenta `keytool`. No PowerShell, numa pasta **fora do repositório**:
+
+```
+keytool -genkeypair -v -keystore launcher-hy300.jks -alias launcher -keyalg RSA -keysize 4096 -validity 10000
+```
+
+Ele pede uma senha para o arquivo, outra para a chave e alguns dados do certificado (nome etc., pode ser básico). O resultado é o arquivo `launcher-hy300.jks`. Se o `keytool` não for reconhecido, use o caminho completo da pasta `bin` do JDK (em `Program Files\Eclipse Adoptium\...`). No Android Studio, o equivalente é *Build > Generate Signed App Bundle / APK > Create new*.
+
+- **Onde guardar:** numa pasta sua fora do projeto, por exemplo `C:\Chaves-HY300\`, com **pelo menos duas cópias** (por exemplo, um pendrive e um cofre de senhas).
+- **Anote** o alias (`launcher`) e as duas senhas em um gerenciador de senhas. Sem elas o arquivo não serve.
+- **Não use a chave de debug** do Android Studio (`.android\debug.keystore`) em versões publicadas: se você trocar de chave depois, os aparelhos não conseguem atualizar.
+- O projeto vai ler o caminho e as senhas de um `keystore.properties` local. O `.gitignore` já bloqueia `*.jks`, `*.keystore` e esse arquivo.
+
 ## Segurança
 - **O Android só aceita atualizar um app com um APK assinado pela mesma chave.** Por isso a chave (keystore) é a peça mais importante: **guarde cópias fora do GitHub e nunca a publique.** Se ela for perdida, o launcher instalado não pode mais ser atualizado, só desinstalado e reinstalado.
 - O SHA-256 protege contra download corrompido. A proteção contra um APK malicioso é a assinatura.

@@ -7,3 +7,16 @@ apps_*.txt
 tv_input.txt
 *.png
 !prototype/assets/*
+
+# Chaves de assinatura e configuração local do Android: NUNCA publicar
+*.jks
+*.keystore
+keystore.properties
+local.properties
+.gradle/
+build/
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
