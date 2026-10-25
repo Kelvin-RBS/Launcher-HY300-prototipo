@@ -16,7 +16,7 @@ class AppEntry(
 object AppRepo {
     /** true: usa o banner do app (formato de TV) quando existir; false: sempre o ícone. */
     const val PREFER_BANNER = true
-    const val MAX_PINNED = 5
+    const val MAX_PINNED = 7
 
     private const val PREFS = "launcher"
     private const val KEY_PINNED = "pinned"
@@ -27,7 +27,9 @@ object AppRepo {
         "com.google.android.youtube.tv",
         "com.global.unitviptv",
         "tv.pluto.android",
-        "com.mercadolibre.android.mplay_tv"
+        "com.mercadolibre.android.mplay_tv",
+        "cm.aptoidetv.pt",
+        "com.instantbits.cast.receiver"
     )
 
     fun launchIntent(pm: PackageManager, pkg: String): Intent? =

@@ -20,3 +20,13 @@ build/
 captures/
 .externalNativeBuild/
 .cxx/
+
+# Jogos (ROMs): nunca publicar. Só ficam o README e os .gitkeep
+jogos/*/*
+!jogos/*/.gitkeep
+*.sfc
+*.smc
+*.swc
+*.fig
+*.smd
+*.gen

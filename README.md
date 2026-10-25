@@ -4,7 +4,7 @@
 
 Um launcher novo, leve e com visual tecnológico para o projetor **HY300** (Android 11, Allwinner H713), mantendo as funções do original e com o objetivo de transformá-lo em um **projetor gamer**.
 
-> **Status:** protótipo de design navegável, análise técnica do launcher original e **primeira versão (0.1) do projeto Android**, ainda **não compilada nem testada no aparelho**. A integração com jogos ainda não foi escrita.
+> **Status:** protótipo de design navegável, análise técnica do launcher original e **versão 0.2 do projeto Android**, que já compila e roda no projetor; a tela de Jogos com o RetroArch **ainda não foi testada**. A integração com jogos ainda não foi escrita.
 
 ## Como este projeto é feito
 A ideia é usar **IA** e **REA** do começo ao fim:
@@ -30,7 +30,7 @@ Ele é pesado para o hardware, envia dados para servidores de rastreamento (Baid
 ## O que o protótipo já tem
 | Parte | Descrição |
 |---|---|
-| **Atalhos editáveis** | Até 5 apps instalados, à esquerda da fileira |
+| **Atalhos editáveis** | Até 7 apps instalados, à esquerda da fileira |
 | **Atalhos fixos** | **Jogos** (ícone de controle estilo Super Nintendo, "em breve"), **Arquivos** (interno e pendrive), **HDMI** e **Gerenciar atalhos** |
 | **Topo** | Rede, Bluetooth e Configurações (engrenagem), todos navegáveis, e o relógio |
 | **Configurações** | Rede, Bluetooth, Idioma, Projeção (zoom, método, keystone, brilho e cor), Áudio (volume e bip do cursor), Data e hora, Sobre o dispositivo |
@@ -43,7 +43,7 @@ Parte das Configurações, como Projeção, só funciona no aparelho abrindo a t
 Abra o [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo/) ou, no seu computador, o arquivo `prototype/index.html`.
 - **Setas:** navegar (com som) · **Enter:** abrir · **Esc:** voltar · **P:** simular pendrive.
 - **Seta para cima** leva aos ícones do topo (Rede, Bluetooth, Configurações).
-- **Gerenciar atalhos** edita os 5 atalhos da esquerda.
+- **Gerenciar atalhos** edita os 7 atalhos da esquerda.
 - No celular, toque nos cartões.
 
 ## Estrutura do repositório
@@ -53,9 +53,10 @@ Abra o [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo
 | `docs/` | Aparelho, extração, análise do original, mapa de funções, design, roadmap, configurações, jogos e RetroArch |
 | `scripts/` | Scripts PowerShell (ADB) para extrair dados, testar telas, instalar o RetroArch e gerar o `latest.json` |
 | `retroarch/` | Configuração de exemplo do RetroArch para o projetor |
+| `jogos/` | Pasta reservada para os jogos do RetroArch (conteúdo fora do Git) |
 | `android/` | Projeto Android (Kotlin) do launcher, v0.1. Guia de uso em `android/README.md` |
 
-Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`docs/13-projeto-android.md`](docs/13-projeto-android.md) · [`CHANGELOG.md`](CHANGELOG.md)
+Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/08-jogos-retroarch.md`](docs/08-jogos-retroarch.md) · [`docs/09-retroarch-otimizado.md`](docs/09-retroarch-otimizado.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`docs/13-projeto-android.md`](docs/13-projeto-android.md) · [`docs/14-jogos-no-launcher.md`](docs/14-jogos-no-launcher.md) · [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Resumo das descobertas
 - O launcher original (`com.htc.htclauncherhighenglishd08`, v1.4.5) é só uma grade de apps. Roda como app de sistema e **não** controla keystone, foco ou imagem.

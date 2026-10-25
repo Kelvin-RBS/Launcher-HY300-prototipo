@@ -60,6 +60,7 @@ class HomeActivity : Activity() {
         val mp = ViewGroup.LayoutParams.MATCH_PARENT
         val wc = ViewGroup.LayoutParams.WRAP_CONTENT
         val root = FrameLayout(this)
+        root.clipChildren = false
         root.setBackgroundColor(Color.BLACK)
 
         // Fundo e degradês para o texto ficar legível
@@ -80,6 +81,10 @@ class HomeActivity : Activity() {
         val top = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
+            // Folga para a borda de foco (que aumenta o botão) não ser cortada
+            clipChildren = false
+            clipToPadding = false
+            setPadding(dp(8), dp(8), dp(8), dp(8))
         }
         top.addView(roundButton(R.drawable.ic_wifi, "Rede", "Wi-Fi e conexão com a internet.") {
             openSettings("WIFIActivity")
@@ -96,8 +101,8 @@ class HomeActivity : Activity() {
             setPadding(dp(6), 0, 0, 0)
         })
         root.addView(top, FrameLayout.LayoutParams(wc, wc, Gravity.TOP or Gravity.END).apply {
-            topMargin = dp(16)
-            marginEnd = dp(32)
+            topMargin = dp(8)
+            marginEnd = dp(24)
         })
 
         // Título e descrição do item em foco
@@ -206,8 +211,8 @@ class HomeActivity : Activity() {
             count++
         }
         // Atalhos fixos: não podem ser removidos nem movidos
-        addFixed("Jogos", "Jogos retrô de 16 bits. Em breve, com RetroArch.", "#6A4FB3", R.drawable.ic_gamepad, 6) {
-            toast("Em breve: jogos de 16 bits com RetroArch")
+        addFixed("Jogos", "Jogos retrô de 16 bits com o RetroArch.", "#6A4FB3", R.drawable.ic_gamepad, 6) {
+            startActivity(Intent(this, GamesActivity::class.java))
         }
         addFixed("Arquivos", "Armazenamento interno e pendrive.", "#8A6A2F", R.drawable.ic_folder, 20) {
             launch("com.softwinner.TvdFileManager")

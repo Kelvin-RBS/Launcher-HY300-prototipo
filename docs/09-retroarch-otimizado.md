@@ -6,6 +6,8 @@ Objetivo: usar o [RetroArch](https://github.com/libretro/RetroArch) como base do
 - **Não foi instalado nem compilado ainda.** O ambiente em que este projeto foi analisado não tem acesso ao projetor, à rede nem ao Android SDK. A instalação precisa ser feita no seu computador (script em `scripts/03-instalar-retroarch.ps1`).
 - O que existe aqui é o **plano** e uma **configuração de exemplo** (`retroarch/retroarch-projetor.cfg`).
 
+Integração com o launcher e instalação passo a passo: `14-jogos-no-launcher.md`.
+
 ## Passo 1: instalar a versão certa
 O aparelho é de 32 bits. A documentação do RetroArch informa que os APKs com sufixo `ra32` são os de 32 bits (`RetroArch_ra32.apk`), disponíveis no buildbot e no site oficial. O pacote dessa versão é `com.retroarch.ra32`.
 

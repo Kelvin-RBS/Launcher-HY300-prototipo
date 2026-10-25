@@ -1,5 +1,12 @@
 # Changelog
 
+## v12
+- Launcher 0.2.0: **7 atalhos** de apps editáveis (antes 5), com Aptoide TV e Cast Receiver no padrão.
+- Corrigida a borda branca de foco dos ícones do topo, que era cortada.
+- **Tela de Jogos** (`GamesActivity`): lista as ROMs de `/Jogos` e abre no RetroArch (versão 32 bits). Ainda não testada no aparelho.
+- Pasta `jogos/` (fora do Git) com um jogo de Super Nintendo, e script `scripts/05-enviar-jogos.ps1`.
+- `docs/14-jogos-no-launcher.md`.
+
 ## v11
 - Primeira versão do **projeto Android** (`android/`): tela inicial, até 5 atalhos de apps com o banner ou ícone do próprio app, atalhos fixos (Jogos, Arquivos, HDMI, Gerenciar atalhos), menu da engrenagem e tela Gerenciar atalhos.
 - Guia de Android Studio em `android/README.md` e arquitetura em `docs/13-projeto-android.md`.

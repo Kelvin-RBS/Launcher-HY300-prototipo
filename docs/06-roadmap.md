@@ -1,7 +1,7 @@
 # Roadmap e pendências
 
 ## Decisões pendentes
-- Apps fora dos 5 atalhos não têm porta de entrada: decidir se haverá "Todos os apps" em algum lugar.
+- Apps fora dos 7 atalhos não têm porta de entrada: decidir se haverá "Todos os apps" em algum lugar.
 - Reordenar atalhos (hoje só adiciona e remove).
 - Ajustes do design que o autor vai enviar.
 - Lista final de cartões fixos (incluir Pluto TV e Mercado Play?).

@@ -39,10 +39,11 @@ b{font-weight:700}
 #mg h2{margin:0;font-size:44px;font-weight:500}
 #mg p{margin:8px 0 26px;color:var(--mu);font-size:20px}
 .h3{font-size:16px;letter-spacing:.2em;color:var(--mu);font-weight:500;margin:0 0 12px}
-#sl{display:flex;gap:14px;margin-bottom:28px}
-.sl{width:208px;height:84px;box-sizing:border-box;border-radius:14px;border:2px dashed #2A3B5C;display:flex;align-items:center;gap:12px;padding:0 14px;font-size:19px;color:var(--mu);cursor:pointer}
+#sl{display:flex;gap:10px;margin-bottom:28px}
+.sl{width:155px;height:84px;box-sizing:border-box;border-radius:14px;border:2px dashed #2A3B5C;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:16px;overflow:hidden;color:var(--mu);cursor:pointer}
 .sl.f{border-style:solid;border-color:#1E2C45;background:#0E1626;color:#fff}
 .sl.on,.cl.on{border:2px solid #E3EEFF;box-shadow:0 0 0 4px rgba(227,238,255,.18)}
+.sl b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ic{width:42px;height:42px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center}
 .ic svg{width:24px;height:24px}
 #gr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -91,7 +92,7 @@ b{font-weight:700}
 <div id="row"><div id="track"></div></div>
 <div id="mg">
 <h2>Gerenciar atalhos</h2>
-<p>Até 5 atalhos à esquerda. Jogos, Arquivos, HDMI e Gerenciar atalhos são fixos.</p>
+<p>Até 7 atalhos à esquerda. Jogos, Arquivos, HDMI e Gerenciar atalhos são fixos.</p>
 <button id="done" type="button">Concluir</button>
 <div class="h3">NA TELA INICIAL · <span id="ct"></span></div>
 <div id="sl"></div>
@@ -129,7 +130,7 @@ var FIX=[
 {id:'hdmi',n:'HDMI',d:'Entrada externa: videogame, notebook ou TV box.',bg:'#2F5DA8',i:P.hdmi,x:1},
 {id:'manage',n:'Gerenciar atalhos',d:'Adicione ou remova os atalhos da tela inicial.',bg:'#4A5568',i:P.mng,x:1}];
 var TOP=[{n:'Rede',d:'Wi-Fi e conexão com a internet.',i:P.wifi,c:0,pf:1},{n:'Bluetooth',d:'Fones, caixas de som e controles.',i:P.bt,c:1,pf:1},{n:'Configurações',d:'Rede, projeção, áudio, data e hora e mais.',i:P.set,c:0,pf:0}];
-var pinned=['nf','yt','pl','mp','apt'],z='row',cur=0,tc=2,mz='slot',ms=0,ml=0,muted=false,ac,tt;
+var pinned=['nf','yt','pl','mp','apt','iptv','cr'],z='row',cur=0,tc=2,mz='slot',ms=0,ml=0,muted=false,ac,tt;
 var $=function(i){return document.getElementById(i)},tr=$('track'),info=$('info'),ti=$('title'),de=$('desc'),toast=$('toast'),mg=$('mg'),slEl=$('sl'),grEl=$('gr'),topEl=$('top');
 function byId(id){return CAT.concat(FIX).filter(function(c){return c.id===id})[0]}
 function list(){return pinned.map(byId).concat(FIX)}
@@ -147,13 +148,13 @@ function open_(){var it=list()[cur];if(it.id==='manage'){openM();return}if(it.id
 function topOpen(){openST(TOP[tc].c,TOP[tc].pf)}
 function openM(){z='mg';mz='slot';ms=0;ml=0;mg.classList.add('s');snd(900,.1,.25);mrender()}
 function closeM(){z='row';mg.classList.remove('s');cur=list().length-1;snd(1650,.05,.2);render()}
-function mrender(){var av=avail(),h='',i,c;for(i=0;i<5;i++){c=pinned[i]?byId(pinned[i]):null;h+='<div class="sl'+(c?' f':'')+(mz==='slot'&&ms===i?' on':'')+'" data-i="'+i+'">'+(c?'<div class="ic" style="background:'+c.bg+'">'+gl(c)+'</div><b>'+c.n+'</b>':(i+1)+' · Vazio')+'</div>'}slEl.innerHTML=h;h='';av.forEach(function(a,k){h+='<div class="cl'+(mz==='list'&&ml===k?' on':'')+'" data-i="'+k+'"><div class="ic" style="background:'+a.bg+'">'+gl(a)+'</div>'+a.n+'</div>'});grEl.innerHTML=h;$('ct').textContent=pinned.length+' DE 5'}
+function mrender(){var av=avail(),h='',i,c;for(i=0;i<7;i++){c=pinned[i]?byId(pinned[i]):null;h+='<div class="sl'+(c?' f':'')+(mz==='slot'&&ms===i?' on':'')+'" data-i="'+i+'">'+(c?'<div class="ic" style="background:'+c.bg+'">'+gl(c)+'</div><b>'+c.n+'</b>':(i+1)+' · Vazio')+'</div>'}slEl.innerHTML=h;h='';av.forEach(function(a,k){h+='<div class="cl'+(mz==='list'&&ml===k?' on':'')+'" data-i="'+k+'"><div class="ic" style="background:'+a.bg+'">'+gl(a)+'</div>'+a.n+'</div>'});grEl.innerHTML=h;$('ct').textContent=pinned.length+' DE 7'}
 slEl.onclick=function(e){var n=e.target.closest('.sl');if(n){mz='slot';ms=+n.dataset.i;mnav('o')}};
 grEl.onclick=function(e){var n=e.target.closest('.cl');if(n){mz='list';ml=+n.dataset.i;mnav('o')}};
 $('done').onclick=closeM;
 function mnav(d){var av=avail(),ok=true;if(d==='b'){closeM();return}
-if(mz==='slot'){if(d==='l'){ok=ms>0;if(ok)ms--}else if(d==='r'){ok=ms<4;if(ok)ms++}else if(d==='d'){ok=av.length>0;if(ok){mz='list';ml=Math.min(ml,av.length-1)}}else if(d==='o'){if(pinned[ms]){say('Removido: '+byId(pinned.splice(ms,1)[0]).n);snd(700,.08,.22);ok=null}else if(av.length){mz='list'}else ok=false}else ok=false}
-else{if(d==='l'){ok=ml>0;if(ok)ml--}else if(d==='r'){ok=ml<av.length-1;if(ok)ml++}else if(d==='u'){if(ml<4)mz='slot';else ml-=4}else if(d==='d'){ok=ml+4<av.length;if(ok)ml+=4}else if(d==='o'){if(pinned.length>=5){say('Limite de 5 atalhos. Remova um antes.');ok=false}else{say('Adicionado: '+av[ml].n);pinned.push(av[ml].id);snd(900,.1,.25);ml=Math.max(0,Math.min(ml,av.length-2));ok=null}}}
+if(mz==='slot'){if(d==='l'){ok=ms>0;if(ok)ms--}else if(d==='r'){ok=ms<6;if(ok)ms++}else if(d==='d'){ok=av.length>0;if(ok){mz='list';ml=Math.min(ml,av.length-1)}}else if(d==='o'){if(pinned[ms]){say('Removido: '+byId(pinned.splice(ms,1)[0]).n);snd(700,.08,.22);ok=null}else if(av.length){mz='list'}else ok=false}else ok=false}
+else{if(d==='l'){ok=ml>0;if(ok)ml--}else if(d==='r'){ok=ml<av.length-1;if(ok)ml++}else if(d==='u'){if(ml<4)mz='slot';else ml-=4}else if(d==='d'){ok=ml+4<av.length;if(ok)ml+=4}else if(d==='o'){if(pinned.length>=7){say('Limite de 7 atalhos. Remova um antes.');ok=false}else{say('Adicionado: '+av[ml].n);pinned.push(av[ml].id);snd(900,.1,.25);ml=Math.max(0,Math.min(ml,av.length-2));ok=null}}}
 if(ok===true)snd(1800,.05,.2);else if(ok===false)snd(520,.06,.12);mrender()}
 function nav(d){if(z==='mg'){mnav(d);return}if(z==='st'){snav(d);return}
 if(z==='top'){if(d==='l')topGo(tc-1);else if(d==='r')topGo(tc+1);else if(d==='d'){z='row';snd(1750,.05,.2);show()}else if(d==='o')topOpen();else snd(520,.06,.12);return}

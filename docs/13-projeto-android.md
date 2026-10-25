@@ -6,7 +6,8 @@ Código em `android/` (Kotlin). Como abrir e instalar: `android/README.md`.
 | Arquivo | Função |
 |---|---|
 | `HomeActivity.kt` | Tela inicial: fundo, topo, título do item em foco e fileira de atalhos |
-| `ManageActivity.kt` | Tela "Gerenciar atalhos" (escolha dos até 5 apps) |
+| `GamesActivity.kt` | Tela de Jogos: lista as ROMs de `/Jogos` e abre no RetroArch |
+| `ManageActivity.kt` | Tela "Gerenciar atalhos" (escolha dos até 7 apps) |
 | `AppRepo.kt` | Lista os apps instalados (comuns e de TV), guarda os atalhos escolhidos e define os padrões |
 | `Util.kt` | Conversão de dp |
 | `res/drawable/ic_*.xml` | Ícones vetoriais (Wi-Fi, Bluetooth, engrenagem, controle, pasta, HDMI, ajustes) |
@@ -26,5 +27,5 @@ Código em `android/` (Kotlin). Como abrir e instalar: `android/README.md`.
 ## Próximos passos
 1. Compilar, corrigir erros e testar no projetor.
 2. Telas próprias de Configurações (como no protótipo), abrindo as originais quando o ajuste exigir permissão de sistema.
-3. Tela de Jogos com o RetroArch (`08` e `09`).
+3. Testar a tela de Jogos com o RetroArch (`14`) e otimizar o RetroArch (`09`).
 4. Atualização do launcher pelo GitHub (`12`).
