@@ -8,7 +8,7 @@
 - Fundo fixo ou com opção de trocar o papel de parede.
 
 ## Próximos passos
-0. (Futuro) Área de jogos de 16 bits com RetroArch: ver `08-jogos-retroarch.md`.
+0. (Futuro) Motor de emulação próprio e nativo para os jogos: ver `14-app-jogos.md`.
 1. Aplicar as alterações de design no protótipo.
 2. Escrever o projeto Android (Kotlin, sem bibliotecas pesadas, categoria HOME/LEANBACK).
 3. Implementar a navegação por foco e o som de troca.

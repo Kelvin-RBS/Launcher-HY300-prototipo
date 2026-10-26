@@ -1,12 +1,12 @@
 # Projeto Android — Launcher HY300
 
-**Versão 0.2.** Foi escrita sem compilador à disposição, então **pode haver erros de compilação**. Se aparecerem, copie a mensagem completa da aba *Build* do Android Studio e envie.
+**Versão 0.3.** Dois apps: `app` (launcher) e `games` (Jogos HY300). Foi escrita sem compilador à disposição, então **pode haver erros de compilação**. Se aparecerem, copie a mensagem completa da aba *Build* do Android Studio e envie.
 
 ## O que já faz
 - Tela inicial com o fundo, o topo (Rede, Bluetooth, engrenagem e hora), o título e a descrição do item em foco e a fileira de atalhos.
 - **Até 7 atalhos de apps com o visual do próprio app** (o banner de TV, ou o ícone se não houver banner). Por padrão, se estiverem instalados: Netflix, YouTube, Unit TV, Pluto TV, Mercado Play, Aptoide TV e Cast Receiver.
 - **Atalhos fixos:** Jogos (ainda "em breve"), Arquivos, HDMI e Gerenciar atalhos.
-- **Engrenagem:** menu que abre as telas originais do sistema (Projeção, Brilho e cor, Rede, Data e hora, Sobre, atualizações etc.).
+- **Engrenagem:** menu que abre as telas originais do sistema.
 - **Gerenciar atalhos:** lista de apps instalados; OK adiciona ou remove (limite de 7).
 
 Ainda **não** tem: as telas próprias de Configurações do protótipo, a tela de Jogos e a atualização pelo GitHub.
@@ -38,3 +38,8 @@ Ou desinstale o novo: `adb uninstall br.hy300.launcher`.
 - Se cada app mostra o banner ou o ícone certo. Para usar sempre o ícone, troque `PREFER_BANNER` para `false` em `AppRepo.kt`.
 - Se **Arquivos** abre o gerenciador de arquivos, se **HDMI** abre a entrada e se a engrenagem lista as telas.
 - Se Netflix e YouTube (apps de TV) aparecem na lista de *Gerenciar atalhos*.
+
+
+## App Jogos HY300 (módulo `games`)
+No topo do Android Studio, escolha **games** ao lado do ▶ e execute para instalá-lo. Detalhes e fluxo: `docs/14-app-jogos.md`.
+Para enviar o jogo: rode `scripts/05-enviar-jogos.ps1` (envia para `/storage/emulated/0/Jogos/` e libera o acesso do app a essa pasta).

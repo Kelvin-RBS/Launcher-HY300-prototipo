@@ -211,14 +211,18 @@ class HomeActivity : Activity() {
             count++
         }
         // Atalhos fixos: não podem ser removidos nem movidos
-        addFixed("Jogos", "Jogos retrô de 16 bits com o RetroArch.", "#6A4FB3", R.drawable.ic_gamepad, 6) {
-            startActivity(Intent(this, GamesActivity::class.java))
+        addFixed("Jogos", "Jogos retrô de 16 bits.", "#6A4FB3", R.drawable.ic_gamepad, 6) {
+            val gamesIntent = AppRepo.launchIntent(packageManager, "br.hy300.games")
+            if (gamesIntent == null) toast("Instale o app Jogos HY300") else startActivity(gamesIntent)
         }
         addFixed("Arquivos", "Armazenamento interno e pendrive.", "#8A6A2F", R.drawable.ic_folder, 20) {
             launch("com.softwinner.TvdFileManager")
         }
         addFixed("HDMI", "Entrada externa: videogame, notebook ou TV box.", "#2F5DA8", R.drawable.ic_hdmi, 20) {
             openComponent("com.softwinner.awlivetv", "com.softwinner.awlivetv.MainActivity")
+        }
+        addFixed("Gerenciar aplicativos", "Abrir, instalar e desinstalar aplicativos.", "#3F5B7A", R.drawable.ic_apps, 20) {
+            startActivity(Intent(this, AppsActivity::class.java))
         }
         addFixed("Gerenciar atalhos", "Adicione ou remova os atalhos da tela inicial.", "#4A5568", R.drawable.ic_sliders, 20) {
             startActivity(Intent(this, ManageActivity::class.java))
@@ -282,7 +286,7 @@ class HomeActivity : Activity() {
         item.addView(TextView(this).apply {
             text = label
             gravity = Gravity.CENTER
-            maxLines = 1
+            maxLines = 2
             ellipsize = TextUtils.TruncateAt.END
             textSize = 11f
             setTextColor(Color.parseColor("#C5D2EA"))
@@ -300,6 +304,7 @@ class HomeActivity : Activity() {
             "Rede" to "WIFIActivity",
             "Bluetooth" to "BluetoothSettingActivity",
             "Idioma" to "LanguageActivity",
+            "Aplicativos (todos)" to "@apps",
             "Projeção (zoom, método, keystone)" to "ProjectionActivity",
             "Brilho e cor" to "PictureModeActivity",
             "Saída de áudio" to "SoundChannelActivity",
@@ -312,7 +317,8 @@ class HomeActivity : Activity() {
         AlertDialog.Builder(this)
             .setTitle("Configurações")
             .setItems(items.map { it.first }.toTypedArray()) { _, which ->
-                openSettings(items[which].second)
+                val target = items[which].second
+                if (target == "@apps") startActivity(Intent(this, AppsActivity::class.java)) else openSettings(target)
             }
             .show()
     }

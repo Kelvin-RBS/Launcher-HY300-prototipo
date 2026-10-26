@@ -19,8 +19,8 @@ android {
         applicationId = "br.hy300.launcher"
         minSdk = 30
         targetSdk = 30
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 4
+        versionName = "0.4.0"
     }
 
     signingConfigs {

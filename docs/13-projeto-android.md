@@ -6,7 +6,8 @@ Código em `android/` (Kotlin). Como abrir e instalar: `android/README.md`.
 | Arquivo | Função |
 |---|---|
 | `HomeActivity.kt` | Tela inicial: fundo, topo, título do item em foco e fileira de atalhos |
-| `GamesActivity.kt` | Tela de Jogos: lista as ROMs de `/Jogos` e abre no RetroArch |
+| `games/` (módulo) | App **Jogos HY300** (`br.hy300.games`): lista de jogos, tela de controle, configurações e entrega da ROM ao emulador. Ver `14-app-jogos.md` |
+| `AppsActivity.kt` | Todos os apps: abre (OK), desinstala (segurar OK por 2 s) e abre a loja para instalar |
 | `ManageActivity.kt` | Tela "Gerenciar atalhos" (escolha dos até 7 apps) |
 | `AppRepo.kt` | Lista os apps instalados (comuns e de TV), guarda os atalhos escolhidos e define os padrões |
 | `Util.kt` | Conversão de dp |
@@ -27,5 +28,5 @@ Código em `android/` (Kotlin). Como abrir e instalar: `android/README.md`.
 ## Próximos passos
 1. Compilar, corrigir erros e testar no projetor.
 2. Telas próprias de Configurações (como no protótipo), abrindo as originais quando o ajuste exigir permissão de sistema.
-3. Testar a tela de Jogos com o RetroArch (`14`) e otimizar o RetroArch (`09`).
+3. Testar o app Jogos (`14`) e criar o motor de emulação próprio (fase 2).
 4. Atualização do launcher pelo GitHub (`12`).

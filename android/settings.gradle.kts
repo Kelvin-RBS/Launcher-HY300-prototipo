@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "LauncherHY300"
-include(":app")
+include(":app", ":games")

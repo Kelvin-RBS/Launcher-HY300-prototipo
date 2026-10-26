@@ -1,0 +1,1 @@
+# Sem regras por enquanto.

@@ -14,14 +14,13 @@
         <package android:name="com.htc.htcsettings" />
         <package android:name="com.softwinner.awlivetv" />
         <package android:name="com.softwinner.TvdFileManager" />
-        <package android:name="com.retroarch.ra32" />
-        <package android:name="com.retroarch" />
-        <package android:name="com.retroarch.aarch64" />
+        <package android:name="br.hy300.games" />
+        <package android:name="com.android.vending" />
+        <package android:name="cm.aptoidetv.pt" />
     </queries>
 
-    <!-- Para listar os jogos da pasta /Jogos (liberar por adb; veja docs/14) -->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Para desinstalar apps (o Android sempre pede a confirmação) -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
@@ -52,7 +51,7 @@
         </activity>
 
         <activity
-            android:name=".GamesActivity"
+            android:name=".AppsActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
 

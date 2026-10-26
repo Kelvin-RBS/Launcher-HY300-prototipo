@@ -1,18 +1,13 @@
-# Envia a pasta "jogos" para o projetor e libera o acesso a arquivos do launcher.
-# Rode na pasta platform-tools, com o projetor conectado (.\adb connect IP:5555).
-# Exemplo: .\05-enviar-jogos.ps1 -Pasta "C:\caminho\Launcher-HY300-prototipo\jogos"
-param([string]$Pasta = ".\jogos")
+# Envia os jogos da pasta "jogos\snes" para a pasta pública /Jogos do projetor.
+# Projetor conectado (adb connect IP:5555). No Terminal do Android Studio, na pasta do projeto:
+#      .\scripts\05-enviar-jogos.ps1
+param([string]$Pasta = ".\jogos\snes")
 
-foreach ($sistema in "snes", "megadrive") {
-  .\adb shell mkdir -p "/storage/emulated/0/Jogos/$sistema"
-  $dir = Join-Path $Pasta $sistema
-  if (Test-Path $dir) {
-    Get-ChildItem $dir -File | Where-Object { $_.Name -ne ".gitkeep" } | ForEach-Object {
-      Write-Host "Enviando $($_.Name) ..."
-      .\adb push $_.FullName "/storage/emulated/0/Jogos/$sistema/"
-    }
-  }
+adb shell mkdir -p /storage/emulated/0/Jogos
+Get-ChildItem $Pasta -File | Where-Object { $_.Extension -in ".sfc", ".smc", ".swc", ".fig" } | ForEach-Object {
+  Write-Host "Enviando $($_.Name) ..."
+  adb push $_.FullName /storage/emulated/0/Jogos/
 }
-# Permite que o launcher liste a pasta /Jogos
-.\adb shell appops set br.hy300.launcher MANAGE_EXTERNAL_STORAGE allow
+# Libera o acesso do app Jogos HY300 a essa pasta (só precisa uma vez)
+adb shell appops set br.hy300.games MANAGE_EXTERNAL_STORAGE allow
 Write-Host "Pronto."

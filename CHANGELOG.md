@@ -1,5 +1,19 @@
 # Changelog
 
+## v15
+- Launcher 0.4.0: novo atalho fixo **Gerenciar aplicativos** (todos os apps; OK abre; segurar OK por 2 s desinstala, com confirmação do Android; o primeiro item abre a loja para instalar). A opção **Aplicativos (todos)** também entrou no menu da engrenagem.
+- App Jogos HY300 0.1.2: o nome do jogo aparece sem "PT-BR" e sem o que estiver entre parênteses ou colchetes.
+
+## v14
+- App Jogos HY300 0.1.1: lê os jogos da pasta pública `/storage/emulated/0/Jogos/` (o adb não escreve em `Android/data`). Precisa do acesso a todos os arquivos, liberado por `appops`.
+- Configurações do app mostram a pasta e se o acesso está liberado.
+
+## v13
+- **Mudança de rumo:** o RetroArch foi removido do projeto (código, scripts, configuração e documentos). A base para jogos passa a ser o **Snes9x EX+**.
+- Novo app **Jogos HY300** (`br.hy300.games`, módulo `games`): lista só com o nome dos jogos, engrenagem com configurações, tela que pede e aguarda um controle Bluetooth, e abertura do jogo no Snes9x EX+.
+- Launcher 0.3.0: o atalho Jogos abre o app novo.
+- `docs/14-app-jogos.md` e `docs/15-analise-snes9x-ex.md` (análise do APK e da ROM).
+
 ## v12
 - Launcher 0.2.0: **7 atalhos** de apps editáveis (antes 5), com Aptoide TV e Cast Receiver no padrão.
 - Corrigida a borda branca de foco dos ícones do topo, que era cortada.
