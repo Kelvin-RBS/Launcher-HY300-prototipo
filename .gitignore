@@ -30,3 +30,8 @@ jogos/*/*
 *.fig
 *.smd
 *.gen
+
+# Núcleos de emulador (licença não comercial do Snes9x): nunca publicar
+android/games/src/main/jniLibs/**/*.so
+*_libretro_android.so
+*_libretro_android.so.zip

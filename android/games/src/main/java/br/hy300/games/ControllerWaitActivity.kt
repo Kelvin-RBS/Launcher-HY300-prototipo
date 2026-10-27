@@ -11,7 +11,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -55,7 +54,7 @@ class ControllerWaitActivity : Activity() {
     private fun checkController() {
         if (started || Controllers.connected().isEmpty()) return
         started = true
-        if (!Emulator.launch(this, game)) {
+        if (!Emulator.play(this, game)) {
             Toast.makeText(this, "Não foi possível abrir o jogo", Toast.LENGTH_LONG).show()
         }
         finish()
@@ -95,20 +94,10 @@ class ControllerWaitActivity : Activity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
         }
-        val ok = Button(this).apply {
-            text = "OK"
-            isAllCaps = false
-            textSize = 16f
-            setOnClickListener { finish() }
-        }
-        val pair = Button(this).apply {
-            text = "Parear controle"
-            isAllCaps = false
-            textSize = 16f
-            setOnClickListener { openBluetoothSettings() }
-        }
-        buttons.addView(ok, LinearLayout.LayoutParams(dp(140), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(12) })
-        buttons.addView(pair, LinearLayout.LayoutParams(dp(180), ViewGroup.LayoutParams.WRAP_CONTENT))
+        val ok = Ui.focusButton(this, "OK") { finish() }
+        val pair = Ui.focusButton(this, "Parear controle") { openBluetoothSettings() }
+        buttons.addView(ok, LinearLayout.LayoutParams(dp(140), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(14) })
+        buttons.addView(pair, LinearLayout.LayoutParams(dp(190), ViewGroup.LayoutParams.WRAP_CONTENT))
         root.addView(buttons)
         ok.requestFocus()
         return root

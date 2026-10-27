@@ -36,6 +36,17 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".EmulatorActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard|navigation"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".EmulatorSettingsActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:screenOrientation="landscape" />

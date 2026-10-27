@@ -1,0 +1,5 @@
+Coloque aqui o núcleo do Snes9x para 32 bits (armeabi-v7a), com o nome:
+
+    libsnes9x2010_libretro_android.so
+
+Veja docs/16-motor-proprio.md. O núcleo NÃO vai para o Git (licença do Snes9x: não comercial).

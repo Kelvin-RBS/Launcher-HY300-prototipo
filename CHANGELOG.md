@@ -1,5 +1,11 @@
 # Changelog
 
+## v16
+- App Jogos HY300 0.2.0: **motor próprio** (C++ e Kotlin) que roda o núcleo libretro do Snes9x, sem controles de toque e em português. Menu de pausa com Select + Start (continuar, reiniciar, salvar e carregar estado, ajustes, sair para a lista de jogos). Sem o núcleo, continua usando o Snes9x EX+.
+- Botões e linhas com **cursor bem visível** (borda branca grossa, fundo azul e aumento) nas telas do app de jogos.
+- A lista aceita jogos em `.zip` (só com ROM de Super Nintendo). Jogos novos: Donkey Kong Country 1, 2 e 3, Super Mario Kart, Goof Troop e Choplifter III.
+- `docs/16-motor-proprio.md`. Os núcleos (`*_libretro_android.so`) ficam fora do Git.
+
 ## v15
 - Launcher 0.4.0: novo atalho fixo **Gerenciar aplicativos** (todos os apps; OK abre; segurar OK por 2 s desinstala, com confirmação do Android; o primeiro item abre a loja para instalar). A opção **Aplicativos (todos)** também entrou no menu da engrenagem.
 - App Jogos HY300 0.1.2: o nome do jogo aparece sem "PT-BR" e sem o que estiver entre parênteses ou colchetes.

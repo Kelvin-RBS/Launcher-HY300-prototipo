@@ -4,7 +4,7 @@
 param([string]$Pasta = ".\jogos\snes")
 
 adb shell mkdir -p /storage/emulated/0/Jogos
-Get-ChildItem $Pasta -File | Where-Object { $_.Extension -in ".sfc", ".smc", ".swc", ".fig" } | ForEach-Object {
+Get-ChildItem $Pasta -File | Where-Object { $_.Extension -in ".sfc", ".smc", ".swc", ".fig", ".zip" } | ForEach-Object {
   Write-Host "Enviando $($_.Name) ..."
   adb push $_.FullName /storage/emulated/0/Jogos/
 }

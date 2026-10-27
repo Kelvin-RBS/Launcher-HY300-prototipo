@@ -9,15 +9,13 @@ import android.hardware.input.InputManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 
-/** Configurações essenciais da fase 1: controles, pasta dos jogos e acesso aos ajustes do emulador. */
+/** Configurações do app de jogos: controles, pasta dos jogos, motor e acesso aos ajustes do emulador. */
 class SettingsActivity : Activity() {
 
     private lateinit var controllersText: TextView
@@ -56,6 +54,15 @@ class SettingsActivity : Activity() {
         setPadding(0, dp(top), 0, 0)
     }
 
+    private fun engineText(): String {
+        if (Engine.ownAvailable(this)) {
+            return "Motor próprio: Snes9x HY300 (núcleo " + Engine.coreName(this) + ")"
+        }
+        val version = Emulator.versionName(packageManager)
+        return "Motor próprio indisponível (núcleo não instalado). Usando o Snes9x EX+ " +
+            (version ?: "(não instalado)")
+    }
+
     private fun buildUi(): ScrollView {
         val col = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -74,38 +81,20 @@ class SettingsActivity : Activity() {
         col.addView(filesText)
 
         col.addView(label("EMULADOR", 11f, "#A9B8D2", 16))
-        val version = Emulator.versionName(packageManager)
-        col.addView(label(
-            if (version == null) "Snes9x EX+ não instalado" else "Snes9x EX+ " + version + " (instalado)",
-            16f, "#EAF1FF", 4
-        ))
-        col.addView(label("Vídeo, áudio e mapeamento de botões ficam nos ajustes do próprio emulador. Os ajustes finos para este projetor virão com o motor próprio (fase 2).", 13f, "#A9B8D2", 4))
+        col.addView(label(engineText(), 15f, "#EAF1FF", 4))
+        col.addView(label("Com o controle conectado, segure Select + Start por um instante durante o jogo para abrir o menu e voltar à lista.", 13f, "#A9B8D2", 4))
 
         val buttons = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, dp(20), 0, 0)
         }
-        val pair = Button(this).apply {
-            text = "Parear controle"
-            isAllCaps = false
-            setOnClickListener { openBluetoothSettings() }
+        val pair = Ui.focusButton(this, "Parear controle") { openBluetoothSettings() }
+        val emu = Ui.focusButton(this, "Ajustes do emulador") {
+            startActivity(Intent(this, EmulatorSettingsActivity::class.java))
         }
-        val emu = Button(this).apply {
-            text = "Ajustes do emulador"
-            isAllCaps = false
-            setOnClickListener {
-                if (!Emulator.openEmulatorMenu(this@SettingsActivity)) {
-                    Toast.makeText(this@SettingsActivity, "Emulador não encontrado", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-        val back = Button(this).apply {
-            text = "Voltar"
-            isAllCaps = false
-            setOnClickListener { finish() }
-        }
-        buttons.addView(pair, LinearLayout.LayoutParams(dp(170), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(12) })
-        buttons.addView(emu, LinearLayout.LayoutParams(dp(190), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(12) })
+        val back = Ui.focusButton(this, "Voltar") { finish() }
+        buttons.addView(pair, LinearLayout.LayoutParams(dp(170), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(14) })
+        buttons.addView(emu, LinearLayout.LayoutParams(dp(210), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(14) })
         buttons.addView(back, LinearLayout.LayoutParams(dp(120), ViewGroup.LayoutParams.WRAP_CONTENT))
         col.addView(buttons)
         pair.requestFocus()

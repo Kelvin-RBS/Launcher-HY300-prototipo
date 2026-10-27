@@ -19,8 +19,29 @@ android {
         applicationId = "br.hy300.games"
         minSdk = 30
         targetSdk = 30
-        versionCode = 3
-        versionName = "0.1.2"
+        versionCode = 4
+        versionName = "0.2.0"
+
+        // O projetor é de 32 bits
+        ndk {
+            abiFilters += listOf("armeabi-v7a")
+        }
+    }
+
+    // Motor próprio (C++). Para compilar sem ele, ponha hy300.native=false em android/gradle.properties
+    if (project.findProperty("hy300.native") != "false") {
+        externalNativeBuild {
+            cmake {
+                path = file("src/main/cpp/CMakeLists.txt")
+            }
+        }
+    }
+
+    // Extrai as bibliotecas nativas (o motor carrega o núcleo do Snes9x por caminho)
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 
     signingConfigs {

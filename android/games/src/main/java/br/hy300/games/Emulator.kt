@@ -25,7 +25,24 @@ object Emulator {
             null
         }
 
-    /** Abre o jogo no emulador. Devolve false se não foi possível. */
+    /** Abre o jogo: no motor próprio, se disponível; senão no Snes9x EX+. */
+    fun play(ctx: Context, game: Game): Boolean {
+        if (Engine.ownAvailable(ctx)) {
+            return try {
+                ctx.startActivity(
+                    Intent(ctx, EmulatorActivity::class.java)
+                        .putExtra("source", game.source)
+                        .putExtra("rel", game.rel)
+                )
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+        return launch(ctx, game)
+    }
+
+    /** Abre o jogo no Snes9x EX+ (motor externo). Devolve false se não foi possível. */
     fun launch(ctx: Context, game: Game): Boolean {
         val intent = Intent(Intent.ACTION_VIEW)
             .setComponent(ComponentName(PACKAGE, ACTIVITY))

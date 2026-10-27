@@ -55,7 +55,7 @@ Abra o [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo
 | `jogos/` | Pasta de partida para os jogos (conteúdo fora do Git) |
 | `android/` | Projeto Android (Kotlin): módulo `app` (launcher) e módulo `games` (app Jogos HY300). Guia em `android/README.md` |
 
-Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/14-app-jogos.md`](docs/14-app-jogos.md) · [`docs/15-analise-snes9x-ex.md`](docs/15-analise-snes9x-ex.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`docs/13-projeto-android.md`](docs/13-projeto-android.md) · [`CHANGELOG.md`](CHANGELOG.md)
+Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/14-app-jogos.md`](docs/14-app-jogos.md) · [`docs/15-analise-snes9x-ex.md`](docs/15-analise-snes9x-ex.md) · [`docs/16-motor-proprio.md`](docs/16-motor-proprio.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`docs/13-projeto-android.md`](docs/13-projeto-android.md) · [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Resumo das descobertas
 - O launcher original (`com.htc.htclauncherhighenglishd08`, v1.4.5) é só uma grade de apps. Roda como app de sistema e **não** controla keystone, foco ou imagem.
@@ -70,7 +70,7 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 
 ## Próximos passos
 1. Instalar o app Jogos HY300 e testar o primeiro jogo (Super Mario World) com um controle Bluetooth ([`docs/14-app-jogos.md`](docs/14-app-jogos.md)).
-2. Fase 2: motor de emulação próprio e nativo para o projetor, sem controle touch ([`docs/14-app-jogos.md`](docs/14-app-jogos.md)).
+2. Testar o motor de emulação próprio, sem controle de toque ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
 3. Compilar e testar o projeto Android no projetor ([`android/README.md`](android/README.md)), depois as telas próprias de Configurações e a atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
 4. Instalar no aparelho, definir como padrão e validar HDMI e Projeção.
 5. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).

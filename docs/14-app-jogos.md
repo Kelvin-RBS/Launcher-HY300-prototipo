@@ -11,7 +11,9 @@ App separado (`br.hy300.games`, módulo `android/games`) com o visual do launche
 ## Fases
 **Fase 1 (esta versão): motor externo.** Quem emula é o **Snes9x EX+** já instalado no projetor, o emulador que você testou e que rodou melhor. O app entrega a ROM por um `ContentProvider` próprio (acesso temporário ao emulador) e abre o emulador com a intent `VIEW`. Os ajustes de vídeo, áudio e botões ficam no emulador.
 
-**Fase 2: motor próprio e nativo.** Um emulador embutido no app, sem tela de toque, com ajustes pensados para este hardware (cortex-a7, 32 bits, `low_ram`, OpenGL ES 3.2). Caminhos possíveis, a decidir: ver `15-analise-snes9x-ex.md`.
+**Fase 2: motor próprio e nativo (já escrito, a testar).** Descrito em `16-motor-proprio.md`. O app usa o motor próprio quando o núcleo está instalado; senão, cai para a fase 1.
+
+**Fase 2 (descrição original):** Um emulador embutido no app, sem tela de toque, com ajustes pensados para este hardware (cortex-a7, 32 bits, `low_ram`, OpenGL ES 3.2). Caminhos possíveis, a decidir: ver `15-analise-snes9x-ex.md`.
 
 ## Onde ficam os jogos
 Na pasta pública **`/storage/emulated/0/Jogos/`** (ou em `Jogos/snes/`). O adb não consegue escrever dentro de `Android/data` no Android 11 (testado: `Permission denied`), por isso a pasta é pública. Para o app **ler** essa pasta, ele precisa do acesso a todos os arquivos, liberado uma vez por adb:

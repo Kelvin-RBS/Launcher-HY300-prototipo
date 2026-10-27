@@ -16,7 +16,7 @@ object Catalog {
     /** Pasta pública dos jogos: o adb consegue enviar arquivos para ela. */
     const val PUBLIC_DIR = "/storage/emulated/0/Jogos"
 
-    private val EXTENSIONS = listOf("sfc", "smc", "swc", "fig")
+    private val EXTENSIONS = listOf("sfc", "smc", "swc", "fig", "zip")
 
     /** Nome para exibir: tira o que está entre () e [] e a etiqueta de idioma "PT-BR". */
     fun cleanTitle(raw: String): String {
@@ -58,7 +58,8 @@ object Catalog {
     private fun scan(dir: File, source: String, prefix: String, out: MutableList<Game>) {
         val files = dir.listFiles() ?: return
         for (f in files) {
-            if (f.isFile && EXTENSIONS.contains(f.extension.lowercase())) {
+            val ext = f.extension.lowercase()
+            if (f.isFile && EXTENSIONS.contains(ext) && (ext != "zip" || RomLoader.zipHasSnesRom(f))) {
                 out.add(Game("snes", "Super Nintendo", source, prefix + f.name, f))
             }
         }

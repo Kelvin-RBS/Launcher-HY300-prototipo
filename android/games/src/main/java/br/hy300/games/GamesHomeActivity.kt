@@ -211,8 +211,8 @@ class GamesHomeActivity : Activity() {
 
     /** Ao escolher o jogo: se não houver controle, pede para conectar; se houver, abre o jogo. */
     private fun play(g: Game) {
-        if (!Emulator.installed(packageManager)) {
-            Toast.makeText(this, "Instale o Snes9x EX+ no projetor", Toast.LENGTH_LONG).show()
+        if (!Engine.ownAvailable(this) && !Emulator.installed(packageManager)) {
+            Toast.makeText(this, "Nenhum emulador disponível. Veja Configurações.", Toast.LENGTH_LONG).show()
             return
         }
         if (Controllers.connected().isEmpty()) {
@@ -223,7 +223,7 @@ class GamesHomeActivity : Activity() {
             )
             return
         }
-        if (!Emulator.launch(this, g)) {
+        if (!Emulator.play(this, g)) {
             Toast.makeText(this, "Não foi possível abrir o jogo", Toast.LENGTH_LONG).show()
         }
     }
