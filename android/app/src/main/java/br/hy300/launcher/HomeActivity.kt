@@ -221,9 +221,6 @@ class HomeActivity : Activity() {
         addFixed("HDMI", "Entrada externa: videogame, notebook ou TV box.", "#2F5DA8", R.drawable.ic_hdmi, 20) {
             openComponent("com.softwinner.awlivetv", "com.softwinner.awlivetv.MainActivity")
         }
-        addFixed("Gerenciar aplicativos", "Abrir, instalar e desinstalar aplicativos.", "#3F5B7A", R.drawable.ic_apps, 20) {
-            startActivity(Intent(this, AppsActivity::class.java))
-        }
         addFixed("Gerenciar atalhos", "Adicione ou remova os atalhos da tela inicial.", "#4A5568", R.drawable.ic_sliders, 20) {
             startActivity(Intent(this, ManageActivity::class.java))
         }
@@ -304,7 +301,7 @@ class HomeActivity : Activity() {
             "Rede" to "WIFIActivity",
             "Bluetooth" to "BluetoothSettingActivity",
             "Idioma" to "LanguageActivity",
-            "Aplicativos (todos)" to "@apps",
+            "Aplicativos" to "@apps",
             "Projeção (zoom, método, keystone)" to "ProjectionActivity",
             "Brilho e cor" to "PictureModeActivity",
             "Saída de áudio" to "SoundChannelActivity",

@@ -1,7 +1,6 @@
 package br.hy300.launcher
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -21,8 +20,8 @@ import android.widget.TextView
 import android.widget.Toast
 
 /**
- * Todos os apps. OK abre o app; segurar OK por 2 segundos pede para desinstalar (o Android mostra
- * "Desinstalar" e "Cancelar"). O primeiro item abre a loja para instalar apps.
+ * Todos os apps (Configurações > Aplicativos). OK abre o app; segurar OK por 2 segundos pede para
+ * desinstalar (o Android mostra "Desinstalar" e "Cancelar").
  */
 class AppsActivity : Activity() {
 
@@ -68,35 +67,23 @@ class AppsActivity : Activity() {
             setDrawSelectorOnTop(true)
         }
         adapter = object : BaseAdapter() {
-            // Posição 0 é o botão "Instalar apps"; depois vêm os apps
-            override fun getCount() = apps.size + 1
+            override fun getCount() = apps.size
             override fun getItem(position: Int): Any = position
             override fun getItemId(position: Int) = position.toLong()
             override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+                val app = apps[position]
                 val cell = LinearLayout(this@AppsActivity).apply {
                     orientation = LinearLayout.VERTICAL
                     gravity = Gravity.CENTER_HORIZONTAL
                     setPadding(dp(4), dp(10), dp(4), dp(8))
                 }
-                val icon = ImageView(this@AppsActivity)
+                val icon = ImageView(this@AppsActivity).apply { setImageDrawable(app.icon) }
                 val label = TextView(this@AppsActivity).apply {
+                    text = app.label
                     gravity = Gravity.CENTER
                     maxLines = 2
                     textSize = 11f
                     setTextColor(Color.parseColor("#C5D2EA"))
-                }
-                if (position == 0) {
-                    icon.setImageResource(R.drawable.ic_plus)
-                    icon.setPadding(dp(12), dp(12), dp(12), dp(12))
-                    icon.background = GradientDrawable().apply {
-                        cornerRadius = dp(10).toFloat()
-                        setColor(Color.parseColor("#2F5DA8"))
-                    }
-                    label.text = "Instalar apps"
-                } else {
-                    val app = apps[position - 1]
-                    icon.setImageDrawable(app.icon)
-                    label.text = app.label
                 }
                 cell.addView(icon, LinearLayout.LayoutParams(dp(48), dp(48)))
                 cell.addView(label, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
@@ -106,7 +93,7 @@ class AppsActivity : Activity() {
             }
         }
         grid.adapter = adapter
-        grid.setOnItemClickListener { _, _, position, _ -> onSelect(position) }
+        grid.setOnItemClickListener { _, _, position, _ -> openApp(position) }
         // OK curto abre; OK segurado desinstala
         grid.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER ||
@@ -127,7 +114,7 @@ class AppsActivity : Activity() {
         apps = AppRepo.installed(this, true)
         adapter.notifyDataSetChanged()
         grid.requestFocus()
-        if (grid.selectedItemPosition < 0) grid.setSelection(0)
+        if (grid.selectedItemPosition < 0 && apps.isNotEmpty()) grid.setSelection(0)
     }
 
     private fun handleOk(event: KeyEvent) {
@@ -137,7 +124,7 @@ class AppsActivity : Activity() {
                 holdFired = false
                 val r = Runnable {
                     holdFired = true
-                    onHold(position)
+                    uninstall(position)
                 }
                 holdRunnable = r
                 handler.postDelayed(r, 2000)
@@ -145,17 +132,14 @@ class AppsActivity : Activity() {
         } else if (event.action == KeyEvent.ACTION_UP) {
             holdRunnable?.let { handler.removeCallbacks(it) }
             holdRunnable = null
-            if (!holdFired && position >= 0) onSelect(position)
+            if (!holdFired && position >= 0) openApp(position)
             holdFired = false
         }
     }
 
-    private fun onSelect(position: Int) {
-        if (position == 0) {
-            installApps()
-            return
-        }
-        val app = apps[position - 1]
+    private fun openApp(position: Int) {
+        if (position < 0 || position >= apps.size) return
+        val app = apps[position]
         val intent = AppRepo.launchIntent(packageManager, app.pkg)
         if (intent == null) {
             Toast.makeText(this, "Não foi possível abrir", Toast.LENGTH_SHORT).show()
@@ -168,9 +152,9 @@ class AppsActivity : Activity() {
         }
     }
 
-    private fun onHold(position: Int) {
-        if (position == 0) return
-        val app = apps[position - 1]
+    private fun uninstall(position: Int) {
+        if (position < 0 || position >= apps.size) return
+        val app = apps[position]
         if (app.system) {
             Toast.makeText(this, app.label + " é do sistema e não pode ser desinstalado", Toast.LENGTH_LONG).show()
             return
@@ -180,28 +164,6 @@ class AppsActivity : Activity() {
             startActivity(Intent(Intent.ACTION_DELETE, Uri.parse("package:" + app.pkg)))
         } catch (e: Exception) {
             Toast.makeText(this, "Não foi possível desinstalar", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun installApps() {
-        val stores = listOf("Google Play" to "com.android.vending", "Aptoide TV" to "cm.aptoidetv.pt")
-            .filter { AppRepo.launchIntent(packageManager, it.second) != null }
-        when (stores.size) {
-            0 -> Toast.makeText(this, "Nenhuma loja de apps instalada", Toast.LENGTH_LONG).show()
-            1 -> openStore(stores[0].second)
-            else -> AlertDialog.Builder(this)
-                .setTitle("Instalar aplicativos")
-                .setItems(stores.map { it.first }.toTypedArray()) { _, which -> openStore(stores[which].second) }
-                .show()
-        }
-    }
-
-    private fun openStore(pkg: String) {
-        val intent = AppRepo.launchIntent(packageManager, pkg) ?: return
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Não foi possível abrir a loja", Toast.LENGTH_SHORT).show()
         }
     }
 }

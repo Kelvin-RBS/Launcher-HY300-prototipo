@@ -1,5 +1,9 @@
 # Changelog
 
+## v17
+- Launcher 0.4.1: removido o atalho fixo **Gerenciar aplicativos** e o item **Instalar apps**. Os apps ficam só em **Configurações > Aplicativos** (antes "Aplicativos (todos)").
+- App Jogos HY300 0.2.1: **segurar Start por 3 segundos** durante o jogo pergunta "Fechar o jogo?"; se sim, volta à lista de jogos. Select + Start continua abrindo o menu de pausa.
+
 ## v16
 - App Jogos HY300 0.2.0: **motor próprio** (C++ e Kotlin) que roda o núcleo libretro do Snes9x, sem controles de toque e em português. Menu de pausa com Select + Start (continuar, reiniciar, salvar e carregar estado, ajustes, sair para a lista de jogos). Sem o núcleo, continua usando o Snes9x EX+.
 - Botões e linhas com **cursor bem visível** (borda branca grossa, fundo azul e aumento) nas telas do app de jogos.

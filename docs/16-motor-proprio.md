@@ -14,11 +14,10 @@ O app **Jogos HY300** agora tem um emulador embutido, sem controles de toque e c
 - **Save do jogo (SRAM)** é gravado ao pausar e ao sair, e **um estado salvo** por jogo.
 
 ## Fechar o jogo com o controle conectado
-Durante o jogo, **segure Select + Start por cerca de 1 segundo** (ou aperte Voltar, ou o botão Guide/Home do controle, se ele chegar ao app). Abre o menu:
+- **Segure Start por 3 segundos:** aparece a pergunta **"Fechar o jogo?"** com **"Não, continuar"** (já selecionado) e **"Sim, fechar o jogo"**. Se escolher Sim, o jogo fecha e volta à lista do app de jogos. O save do jogo é mantido.
+- **Segure Select + Start por cerca de 1 segundo** (ou aperte Voltar ou o botão Guide): abre o menu completo com **Continuar · Reiniciar · Salvar estado · Carregar estado · Ajustes · Sair para a lista de jogos**.
 
-**Continuar · Reiniciar · Salvar estado · Carregar estado · Ajustes · Sair para a lista de jogos**
-
-"Sair" volta à lista do app de jogos. No menu, o direcional navega, A confirma e B volta.
+No menu e na pergunta, o direcional navega, A confirma e B volta. Observação: enquanto você segura Start, o próprio jogo recebe o botão Start e pode pausar. Se escolher "Não, continuar", aperte Start de novo.
 
 ## Ajustes (Configurações > Ajustes do emulador)
 Proporção da tela (4:3, 8:7 ou tela cheia), botões do controle (por posição, estilo Xbox, ou por rótulo, estilo Nintendo), latência do áudio e mostrar quadros por segundo. Não há opções de toque.

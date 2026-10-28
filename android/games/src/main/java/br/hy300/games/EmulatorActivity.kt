@@ -30,7 +30,9 @@ import java.io.File
 class EmulatorActivity : Activity(), SurfaceHolder.Callback {
 
     private companion object {
-        const val COMBO = (1 shl 2) or (1 shl 3)  // Select + Start
+        const val SELECT_BIT = 1 shl 2
+        const val START_BIT = 1 shl 3
+        const val COMBO = SELECT_BIT or START_BIT  // Select + Start
     }
 
     private val lock = Any()
@@ -39,6 +41,8 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
     private lateinit var root: FrameLayout
     private lateinit var surfaceView: SurfaceView
     private lateinit var menu: LinearLayout
+    private lateinit var confirm: LinearLayout
+    private lateinit var noButton: View
     private lateinit var messageView: TextView
     private lateinit var fpsView: TextView
     private val hideMessage = Runnable { messageView.visibility = View.GONE }
@@ -61,7 +65,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         buildUi()
         running = true
         thread = Thread({ emuLoop() }, "emu").also { it.start() }
-        say("Segure Select + Start para abrir o menu")
+        say("Select + Start: menu  \u00B7  segure Start por 3 s: fechar o jogo")
     }
 
     override fun onResume() {
@@ -151,6 +155,33 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         addItem("Sair para a lista de jogos") { finish() }
         root.addView(menu, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
 
+        // Pergunta "Fechar o jogo?" (abre ao segurar Start por 3 segundos)
+        confirm = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_HORIZONTAL
+            setBackgroundColor(Color.argb(240, 6, 10, 20))
+            setPadding(dp(30), dp(22), dp(30), dp(22))
+            visibility = View.GONE
+        }
+        confirm.addView(TextView(this).apply {
+            text = "Fechar o jogo?"
+            textSize = 24f
+            gravity = Gravity.CENTER
+            setTextColor(Color.parseColor("#EAF1FF"))
+        })
+        confirm.addView(TextView(this).apply {
+            text = game.title + "\nO save do jogo é mantido. Estados não salvos serão perdidos."
+            textSize = 14f
+            gravity = Gravity.CENTER
+            setTextColor(Color.parseColor("#C5D2EA"))
+            setPadding(0, dp(8), 0, dp(6))
+        })
+        noButton = Ui.focusButton(this, "Não, continuar") { closeMenu() }
+        confirm.addView(noButton, LinearLayout.LayoutParams(dp(300), ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(10) })
+        confirm.addView(Ui.focusButton(this, "Sim, fechar o jogo") { finish() },
+            LinearLayout.LayoutParams(dp(300), ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
+        root.addView(confirm, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
+
         setContentView(root)
     }
 
@@ -192,7 +223,20 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         menu.getChildAt(1).requestFocus()
     }
 
+    private fun openCloseDialog() {
+        if (menuVisible) return
+        menuVisible = true
+        paused = true
+        keyMask = 0
+        axisMask = 0
+        padMask = 0
+        if (coreReady) saveSram()
+        confirm.visibility = View.VISIBLE
+        noButton.requestFocus()
+    }
+
     private fun closeMenu() {
+        confirm.visibility = View.GONE
         menu.visibility = View.GONE
         menuVisible = false
         paused = false
@@ -333,6 +377,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         var frames = 0
         var lastFps = System.nanoTime()
         var comboSince = 0L
+        var startSince = 0L
         while (running) {
             if (paused) {
                 if (!wasPaused) {
@@ -363,6 +408,19 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
                 }
             } else {
                 comboSince = 0L
+            }
+            // Start segurado sozinho por 3 segundos: pergunta se quer fechar o jogo
+            if ((mask and START_BIT) != 0 && (mask and SELECT_BIT) == 0) {
+                val now = System.nanoTime()
+                if (startSince == 0L) {
+                    startSince = now
+                } else if (now - startSince > 3_000_000_000L) {
+                    startSince = 0L
+                    ui.post { openCloseDialog() }
+                    continue
+                }
+            } else {
+                startSince = 0L
             }
             val n = synchronized(lock) {
                 NativeEmu.setInput(0, mask)

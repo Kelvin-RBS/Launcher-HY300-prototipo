@@ -15,8 +15,6 @@
         <package android:name="com.softwinner.awlivetv" />
         <package android:name="com.softwinner.TvdFileManager" />
         <package android:name="br.hy300.games" />
-        <package android:name="com.android.vending" />
-        <package android:name="cm.aptoidetv.pt" />
     </queries>
 
     <!-- Para desinstalar apps (o Android sempre pede a confirmação) -->

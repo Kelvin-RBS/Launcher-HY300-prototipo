@@ -7,7 +7,7 @@ Código em `android/` (Kotlin). Como abrir e instalar: `android/README.md`.
 |---|---|
 | `HomeActivity.kt` | Tela inicial: fundo, topo, título do item em foco e fileira de atalhos |
 | `games/` (módulo) | App **Jogos HY300** (`br.hy300.games`): lista de jogos, tela de controle, configurações e entrega da ROM ao emulador. Ver `14-app-jogos.md` |
-| `AppsActivity.kt` | Todos os apps: abre (OK), desinstala (segurar OK por 2 s) e abre a loja para instalar |
+| `AppsActivity.kt` | Configurações > Aplicativos: todos os apps; abre (OK) e desinstala (segurar OK por 2 s) |
 | `ManageActivity.kt` | Tela "Gerenciar atalhos" (escolha dos até 7 apps) |
 | `AppRepo.kt` | Lista os apps instalados (comuns e de TV), guarda os atalhos escolhidos e define os padrões |
 | `Util.kt` | Conversão de dp |

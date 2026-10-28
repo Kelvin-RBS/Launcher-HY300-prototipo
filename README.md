@@ -31,7 +31,7 @@ Ele é pesado para o hardware, envia dados para servidores de rastreamento (Baid
 | Parte | Descrição |
 |---|---|
 | **Atalhos editáveis** | Até 7 apps instalados, à esquerda da fileira |
-| **Atalhos fixos** | **Jogos** (ícone de controle estilo Super Nintendo; abre o app Jogos HY300), **Arquivos** (interno e pendrive), **HDMI**, **Gerenciar aplicativos** (todos os apps: abrir, instalar e desinstalar) e **Gerenciar atalhos** |
+| **Atalhos fixos** | **Jogos** (ícone de controle estilo Super Nintendo; abre o app Jogos HY300), **Arquivos** (interno e pendrive), **HDMI** e **Gerenciar atalhos** |
 | **Topo** | Rede, Bluetooth e Configurações (engrenagem), todos navegáveis, e o relógio |
 | **Configurações** | Rede, Bluetooth, Idioma, Projeção (zoom, método, keystone, brilho e cor), Áudio (volume e bip do cursor), Data e hora, Sobre o dispositivo |
 | **Som** | Tique ao mover o cursor, desligável em Áudio |
