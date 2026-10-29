@@ -27,10 +27,11 @@ object Emulator {
 
     /** Abre o jogo: no motor próprio, se disponível; senão no Snes9x EX+. */
     fun play(ctx: Context, game: Game): Boolean {
-        if (Engine.ownAvailable(ctx)) {
+        if (Engine.ownAvailable(ctx, game.system)) {
             return try {
                 ctx.startActivity(
                     Intent(ctx, EmulatorActivity::class.java)
+                        .putExtra("system", game.system)
                         .putExtra("source", game.source)
                         .putExtra("rel", game.rel)
                 )
@@ -39,7 +40,8 @@ object Emulator {
                 false
             }
         }
-        return launch(ctx, game)
+        // O Snes9x EX+ só roda Super Nintendo
+        return game.system == "snes" && launch(ctx, game)
     }
 
     /** Abre o jogo no Snes9x EX+ (motor externo). Devolve false se não foi possível. */

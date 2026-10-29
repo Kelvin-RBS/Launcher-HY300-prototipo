@@ -6,6 +6,14 @@ O app **Jogos HY300** agora tem um emulador embutido, sem controles de toque e c
 - **Nosso (escrito neste projeto):** o "frontend" em C++ e Kotlin: vídeo, áudio, entrada de controles, menu de pausa, estados salvos, save do jogo e os ajustes.
 - **Da comunidade:** o **núcleo de emulação** (`snes9x2010`), baixado pronto do site do libretro. Não foi escrito nem compilado aqui. A licença do Snes9x é **não comercial**: uso pessoal é ok, e por isso o núcleo **nunca vai para o GitHub**.
 
+## Sistemas e núcleos
+| Sistema | Pasta | Núcleo (arquivo em `jniLibs/armeabi-v7a/`) |
+|---|---|---|
+| Super Nintendo | `snes/` | `libsnes9x2010_libretro_android.so` (ou `libsnes9x_libretro_android.so`) |
+| NES | `nes/` | `libfceumm_libretro_android.so` (ou `libnestopia_...` ou `libquicknes_...`) |
+
+O app descobre o sistema pela extensão (`.sfc`, `.smc`... ou `.nes`) ou pelo que há dentro do `.zip`, e usa o núcleo certo. O Snes9x EX+ só serve para Super Nintendo: jogos de NES **precisam** do núcleo do NES. Os botões do NES (A, B, Select, Start e direcional) usam o mesmo mapeamento do controle.
+
 ## Como funciona
 - **Vídeo:** o núcleo entrega cada quadro em RGB565; o app copia para uma `SurfaceView` com o tamanho do quadro e o **sistema faz a escala** (sem OpenGL), o que é leve para o cortex-a7.
 - **Áudio:** `AudioTrack` em modo de baixa latência. A escrita bloqueia quando o buffer enche, e isso dá o ritmo (60 quadros por segundo) sem relógio extra.

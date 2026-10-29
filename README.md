@@ -76,7 +76,7 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 1. Medir o desempenho dos jogos no projetor e afinar o som e a latência ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
 2. Telas próprias de Configurações no launcher, abrindo as originais quando o ajuste exigir permissão de sistema ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
 3. Atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
-4. Mais sistemas de jogos, como NES (hoje só Super Nintendo).
+4. Testar o NES (precisa do núcleo `fceumm`) e acrescentar outros sistemas.
 5. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 
 ## Avisos

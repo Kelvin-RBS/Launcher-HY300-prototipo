@@ -55,12 +55,17 @@ class SettingsActivity : Activity() {
     }
 
     private fun engineText(): String {
-        if (Engine.ownAvailable(this)) {
-            return "Motor próprio: Snes9x HY300 (núcleo " + Engine.coreName(this) + ")"
+        val lines = ArrayList<String>()
+        for (system in listOf("snes", "nes")) {
+            val core = Engine.coreName(this, system)
+            lines.add(Systems.label(system) + ": " + (if (core != null && NativeEmu.ready) "núcleo " + core else "núcleo não instalado"))
         }
-        val version = Emulator.versionName(packageManager)
-        return "Motor próprio indisponível (núcleo não instalado). Usando o Snes9x EX+ " +
-            (version ?: "(não instalado)")
+        if (!Engine.ownAvailable(this)) {
+            val version = Emulator.versionName(packageManager)
+            lines.add("O Super Nintendo usa o Snes9x EX+ " + (version ?: "(não instalado)"))
+        }
+        return lines.joinToString("
+")
     }
 
     private fun buildUi(): ScrollView {

@@ -33,9 +33,10 @@ class ControllerWaitActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val system = intent.getStringExtra("system") ?: "snes"
         val source = intent.getStringExtra("source") ?: "app"
         val rel = intent.getStringExtra("rel") ?: ""
-        game = Game("snes", "Super Nintendo", source, rel, File(Catalog.baseFor(this, source), rel))
+        game = Game(system, Systems.label(system), source, rel, File(Catalog.baseFor(this, source), rel))
         inputManager = getSystemService(Context.INPUT_SERVICE) as InputManager
         setContentView(buildUi())
     }

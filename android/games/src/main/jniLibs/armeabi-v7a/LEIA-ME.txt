@@ -1,5 +1,8 @@
-Coloque aqui o núcleo do Snes9x para 32 bits (armeabi-v7a), com o nome:
+Coloque aqui os núcleos para 32 bits (armeabi-v7a), com estes nomes:
 
-    libsnes9x2010_libretro_android.so
+    Super Nintendo:  libsnes9x2010_libretro_android.so
+    NES:             libfceumm_libretro_android.so
 
-Veja docs/16-motor-proprio.md. O núcleo NÃO vai para o Git (licença do Snes9x: não comercial).
+Baixe em https://buildbot.libretro.com/nightly/android/latest/armeabi-v7a/ (arquivos terminados em
+_libretro_android.so.zip), extraia e renomeie acrescentando "lib" no começo.
+Veja docs/16-motor-proprio.md. Os núcleos NÃO vão para o Git.

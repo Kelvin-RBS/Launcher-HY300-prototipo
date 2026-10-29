@@ -58,9 +58,10 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val system = intent.getStringExtra("system") ?: "snes"
         val source = intent.getStringExtra("source") ?: "app"
         val rel = intent.getStringExtra("rel") ?: ""
-        game = Game("snes", "Super Nintendo", source, rel, File(Catalog.baseFor(this, source), rel))
+        game = Game(system, Systems.label(system), source, rel, File(Catalog.baseFor(this, source), rel))
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         buildUi()
         running = true
@@ -333,7 +334,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
     }
 
     private fun emuLoop() {
-        val corePath = Engine.corePath(this)
+        val corePath = Engine.corePath(this, game.system)
         if (corePath == null) {
             fail("Núcleo do emulador não encontrado")
             return
@@ -350,7 +351,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
             fail("Não foi possível ler o jogo")
             return
         }
-        if (!NativeEmu.loadGame(RomLoader.stripHeader(rom.second), rom.first)) {
+        if (!NativeEmu.loadGame(RomLoader.stripHeader(rom.second, game.system), rom.first)) {
             NativeEmu.unload()
             fail("O núcleo não aceitou este jogo")
             return

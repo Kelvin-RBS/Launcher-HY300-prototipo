@@ -113,7 +113,7 @@ b{font-weight:700}
 <div id="sn"></div>
 <div id="sf">Setas navegar · Enter selecionar · Esc voltar</div>
 </div>
-<div id="gm"><h2>Meus jogos</h2><p>Super Nintendo  ·  OK para jogar  ·  Voltar sai</p><div id="gl"></div></div>
+<div id="gm"><h2>Meus jogos</h2><p>Super Nintendo e NES  ·  OK para jogar  ·  Voltar sai</p><div id="gl"></div></div>
 <div id="toast" role="status"></div>
 </div>
 </div>
@@ -204,7 +204,7 @@ if(ok)snd(1800,.05,.2);else snd(520,.06,.12);srender()}
 $('sm').onclick=function(e){var n=e.target.closest('.mi');if(n){sc=+n.dataset.k;sf='pane';sr=0;stk=[];snd(1800,.05,.2);srender()}};
 $('sp').onclick=function(e){var n=e.target.closest('.rw');if(n){sf='pane';sr=+n.dataset.k;snav('o')}};
 $('sx').onclick=closeST;
-var GAMES=['Choplifter III','Donkey Kong Country','Donkey Kong Country 2','Donkey Kong Country 3','Goof Troop','Super Mario Kart','Super Mario World'],gi=0;
+var GAMES=['Choplifter III','Donkey Kong Country','Donkey Kong Country 2','Donkey Kong Country 3','Goof Troop','Super Mario Bros. 3','Super Mario Kart','Super Mario World'],gi=0;
 function grender(){var h='';GAMES.forEach(function(g,k){h+='<div class="rw'+(k===gi?' on':'')+'"><span>'+g+'</span></div>'});$('gl').innerHTML=h}
 function openG(){z='gm';gi=0;$('gm').classList.add('s');snd(900,.1,.25);grender()}
 function closeG(){z='row';$('gm').classList.remove('s');snd(1650,.05,.2);show()}

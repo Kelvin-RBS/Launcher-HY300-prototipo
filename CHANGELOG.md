@@ -1,5 +1,10 @@
 # Changelog
 
+## v19
+- App Jogos HY300 0.3.0: suporte a **NES**, além do Super Nintendo. O app escolhe o sistema pela extensão (ou pelo conteúdo do `.zip`) e o núcleo certo (`fceumm` para NES). Primeiro jogo de NES: Super Mario Bros. 3.
+- Sem o núcleo do sistema, o app avisa "Falta o núcleo de ...". O Snes9x EX+ continua servindo só ao Super Nintendo.
+- O script `05-enviar-jogos.ps1` envia as pastas `snes` e `nes`.
+
 ## v18
 - **README em inglês** (`README.en.md`), com opção de troca de idioma no topo dos dois README. O original continua em português.
 - Launcher 0.4.2: o menu da engrenagem ficou sem os parênteses de "Projeção" e "Atualização local", sem "Fuso horário" (fica em Data e hora) e com **"Sobre o dispositivo" por último**.

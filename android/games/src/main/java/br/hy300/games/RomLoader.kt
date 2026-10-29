@@ -4,16 +4,26 @@ import java.io.File
 import java.util.zip.ZipFile
 
 object RomLoader {
-    private val ROM_EXT = listOf("sfc", "smc", "swc", "fig")
+    private val SNES_EXT = listOf("sfc", "smc", "swc", "fig")
 
-    private fun isRom(name: String) = ROM_EXT.contains(name.substringAfterLast('.', "").lowercase())
+    /** "snes", "nes" ou null, conforme a extensão do nome. */
+    private fun systemOfName(name: String): String? {
+        val ext = name.substringAfterLast('.', "").lowercase()
+        return when {
+            SNES_EXT.contains(ext) -> "snes"
+            ext == "nes" -> "nes"
+            else -> null
+        }
+    }
 
-    /** O .zip tem alguma ROM de Super Nintendo? (ROMs de NES, por exemplo, ficam de fora.) */
-    fun zipHasSnesRom(file: File): Boolean =
+    /** Sistema da primeira ROM de dentro do .zip, ou null se não houver ROM suportada. */
+    fun zipSystem(file: File): String? =
         try {
-            ZipFile(file).use { zip -> zip.entries().asSequence().any { !it.isDirectory && isRom(it.name) } }
+            ZipFile(file).use { zip ->
+                zip.entries().asSequence().filter { !it.isDirectory }.mapNotNull { systemOfName(it.name) }.firstOrNull()
+            }
         } catch (e: Exception) {
-            false
+            null
         }
 
     /** Devolve (nome, bytes) da ROM. Se for .zip, extrai a primeira ROM de dentro. */
@@ -21,7 +31,7 @@ object RomLoader {
         try {
             if (file.extension.lowercase() == "zip") {
                 ZipFile(file).use { zip ->
-                    val entry = zip.entries().asSequence().firstOrNull { !it.isDirectory && isRom(it.name) }
+                    val entry = zip.entries().asSequence().firstOrNull { !it.isDirectory && systemOfName(it.name) != null }
                     if (entry == null) null else zip.getInputStream(entry).use { Pair(entry.name, it.readBytes()) }
                 }
             } else {
@@ -31,7 +41,7 @@ object RomLoader {
             null
         }
 
-    /** Tira o cabeçalho de 512 bytes que algumas ROMs antigas têm. */
-    fun stripHeader(data: ByteArray): ByteArray =
-        if (data.size % 1024 == 512) data.copyOfRange(512, data.size) else data
+    /** Super Nintendo: tira o cabeçalho de 512 bytes que algumas ROMs antigas têm. NES: não mexe (o iNES precisa do cabeçalho). */
+    fun stripHeader(data: ByteArray, system: String): ByteArray =
+        if (system == "snes" && data.size % 1024 == 512) data.copyOfRange(512, data.size) else data
 }

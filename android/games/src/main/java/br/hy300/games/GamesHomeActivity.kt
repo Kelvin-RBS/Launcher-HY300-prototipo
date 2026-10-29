@@ -210,13 +210,14 @@ class GamesHomeActivity : Activity() {
 
     /** Ao escolher o jogo: se não houver controle, pede para conectar; se houver, abre o jogo. */
     private fun play(g: Game) {
-        if (!Engine.ownAvailable(this) && !Emulator.installed(packageManager)) {
-            Toast.makeText(this, "Nenhum emulador disponível. Veja Configurações.", Toast.LENGTH_LONG).show()
+        if (!Engine.ownAvailable(this, g.system) && !(g.system == "snes" && Emulator.installed(packageManager))) {
+            Toast.makeText(this, "Falta o núcleo de " + g.systemLabel + ". Veja Configurações.", Toast.LENGTH_LONG).show()
             return
         }
         if (Controllers.connected().isEmpty()) {
             startActivity(
                 Intent(this, ControllerWaitActivity::class.java)
+                    .putExtra("system", g.system)
                     .putExtra("source", g.source)
                     .putExtra("rel", g.rel)
             )

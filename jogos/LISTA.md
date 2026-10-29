@@ -2,4 +2,4 @@
 
 **Super Nintendo** (`jogos/snes/`): Super Mario World, Donkey Kong Country, Donkey Kong Country 2, Donkey Kong Country 3, Super Mario Kart, Goof Troop, Choplifter III.
 
-**NES** (`jogos/nes/`, ainda sem emulador no app): Super Mario Bros. 3. É uma ROM de NES e não roda no Snes9x.
+**NES** (`jogos/nes/`): Super Mario Bros. 3. Precisa do núcleo do NES (veja `docs/16-motor-proprio.md`).

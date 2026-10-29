@@ -16,7 +16,7 @@ object Catalog {
     /** Pasta pública dos jogos: o adb consegue enviar arquivos para ela. */
     const val PUBLIC_DIR = "/storage/emulated/0/Jogos"
 
-    private val EXTENSIONS = listOf("sfc", "smc", "swc", "fig", "zip")
+    private val SNES_EXT = listOf("sfc", "smc", "swc", "fig")
 
     /** Nome para exibir: tira o que está entre () e [] e a etiqueta de idioma "PT-BR". */
     fun cleanTitle(raw: String): String {
@@ -48,20 +48,33 @@ object Catalog {
         if (canReadPublic()) {
             scan(File(PUBLIC_DIR), "pub", "", result)
             scan(File(PUBLIC_DIR, "snes"), "pub", "snes/", result)
+            scan(File(PUBLIC_DIR, "nes"), "pub", "nes/", result)
         }
-        val appSnes = File(appRoot(ctx), "snes")
-        appSnes.mkdirs()
-        scan(appSnes, "app", "snes/", result)
+        for (folder in listOf("snes", "nes")) {
+            val dir = File(appRoot(ctx), folder)
+            dir.mkdirs()
+            scan(dir, "app", folder + "/", result)
+        }
         return result.sortedBy { it.title.lowercase() }
+    }
+
+    /** Sistema do arquivo: pela extensão ou, no caso de .zip, pela ROM de dentro. */
+    private fun systemOf(f: File): String? {
+        val ext = f.extension.lowercase()
+        return when {
+            SNES_EXT.contains(ext) -> "snes"
+            ext == "nes" -> "nes"
+            ext == "zip" -> RomLoader.zipSystem(f)
+            else -> null
+        }
     }
 
     private fun scan(dir: File, source: String, prefix: String, out: MutableList<Game>) {
         val files = dir.listFiles() ?: return
         for (f in files) {
-            val ext = f.extension.lowercase()
-            if (f.isFile && EXTENSIONS.contains(ext) && (ext != "zip" || RomLoader.zipHasSnesRom(f))) {
-                out.add(Game("snes", "Super Nintendo", source, prefix + f.name, f))
-            }
+            if (!f.isFile) continue
+            val system = systemOf(f) ?: continue
+            out.add(Game(system, Systems.label(system), source, prefix + f.name, f))
         }
     }
 }

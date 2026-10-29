@@ -78,7 +78,7 @@ Main documents (Portuguese): [`docs/05-design.md`](docs/05-design.md) · [`docs/
 1. Measure game performance on the projector and tune sound and latency ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
 2. Own Settings screens in the launcher, opening the original ones when a setting needs system permission ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
 3. Launcher updates through GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
-4. More game systems, such as NES (only Super Nintendo today).
+4. Test NES (needs the `fceumm` core) and add other systems.
 5. Future: custom firmware ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 
 ## Notices
