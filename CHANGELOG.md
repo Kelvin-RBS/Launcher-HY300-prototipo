@@ -1,5 +1,12 @@
 # Changelog
 
+## v18
+- **README em inglês** (`README.en.md`), com opção de troca de idioma no topo dos dois README. O original continua em português.
+- Launcher 0.4.2: o menu da engrenagem ficou sem os parênteses de "Projeção" e "Atualização local", sem "Fuso horário" (fica em Data e hora) e com **"Sobre o dispositivo" por último**.
+- App Jogos HY300 0.2.2: o **cursor não é mais cortado** nas bordas (o botão não aumenta mais ao receber o foco) e a **lista de jogos não sobrepõe mais o título** ao rolar.
+- Protótipo: nova tela de jogos e página "Aplicativos" nas Configurações.
+- Verificado: NDK 27.0.12077973 e CMake 3.22.1 (as versões que o projeto usa) estão instalados e o projeto compila.
+
 ## v17
 - Launcher 0.4.1: removido o atalho fixo **Gerenciar aplicativos** e o item **Instalar apps**. Os apps ficam só em **Configurações > Aplicativos** (antes "Aplicativos (todos)").
 - App Jogos HY300 0.2.1: **segurar Start por 3 segundos** durante o jogo pergunta "Fechar o jogo?"; se sim, volta à lista de jogos. Select + Start continua abrindo o menu de pausa.

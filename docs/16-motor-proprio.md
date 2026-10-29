@@ -31,6 +31,7 @@ Proporção da tela (4:3, 8:7 ou tela cheia), botões do controle (por posição
 Sem o núcleo (ou se a parte nativa não compilar), o app continua usando o **Snes9x EX+** instalado, como antes. Para compilar sem a parte nativa, ponha `hy300.native=false` em `android/gradle.properties`.
 
 ## O que foi testado
+- **No projetor (testado pelo autor):** o motor próprio abre o jogo com o núcleo `snes9x2010`, o menu de pausa (Select + Start), a pergunta "Fechar o jogo?" (segurar Start por 3 s), os ajustes e o reconhecimento de um controle Xbox Bluetooth funcionam.
 - A lógica do C++ foi testada **no computador** com um núcleo libretro falso: carregar o núcleo, entrada, áudio, estado e save passaram.
 - O código Kotlin **não foi compilado** e nada rodou no projetor ainda.
 

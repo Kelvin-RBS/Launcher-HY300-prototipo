@@ -60,7 +60,6 @@ class HomeActivity : Activity() {
         val mp = ViewGroup.LayoutParams.MATCH_PARENT
         val wc = ViewGroup.LayoutParams.WRAP_CONTENT
         val root = FrameLayout(this)
-        root.clipChildren = false
         root.setBackgroundColor(Color.BLACK)
 
         // Fundo e degradês para o texto ficar legível
@@ -302,14 +301,13 @@ class HomeActivity : Activity() {
             "Bluetooth" to "BluetoothSettingActivity",
             "Idioma" to "LanguageActivity",
             "Aplicativos" to "@apps",
-            "Projeção (zoom, método, keystone)" to "ProjectionActivity",
+            "Projeção" to "ProjectionActivity",
             "Brilho e cor" to "PictureModeActivity",
             "Saída de áudio" to "SoundChannelActivity",
             "Data e hora" to "DateTimeActivity",
-            "Fuso horário" to "TimeZoneActivity",
-            "Sobre o dispositivo" to "AboutDeviceActivity",
-            "Atualização local (pendrive)" to "SystemUpdateActivity",
-            "Atualização online" to "UpdateActivity"
+            "Atualização local" to "SystemUpdateActivity",
+            "Atualização online" to "UpdateActivity",
+            "Sobre o dispositivo" to "AboutDeviceActivity"
         )
         AlertDialog.Builder(this)
             .setTitle("Configurações")

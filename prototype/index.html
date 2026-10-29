@@ -78,6 +78,11 @@ b{font-weight:700}
 .bar i{display:block;height:100%;background:#4DA3FF}
 #sn{position:absolute;left:400px;bottom:22px;width:816px;font-size:16px;color:var(--mu);white-space:nowrap}
 #sf{position:absolute;left:64px;bottom:22px;width:300px;font-size:16px;color:var(--mu)}
+#gm{position:absolute;inset:0;background:#060A14;padding:44px 64px;box-sizing:border-box;display:none}
+#gm.s{display:block}
+#gm h2{margin:0;font-size:44px;font-weight:500}
+#gm p{margin:8px 0 22px;color:var(--mu);font-size:20px}
+#gl{width:640px}
 </style>
 </head>
 <body>
@@ -108,6 +113,7 @@ b{font-weight:700}
 <div id="sn"></div>
 <div id="sf">Setas navegar · Enter selecionar · Esc voltar</div>
 </div>
+<div id="gm"><h2>Meus jogos</h2><p>Super Nintendo  ·  OK para jogar  ·  Voltar sai</p><div id="gl"></div></div>
 <div id="toast" role="status"></div>
 </div>
 </div>
@@ -125,7 +131,7 @@ var CAT=[
 {id:'cr',n:'Cast Receiver',d:'Receba vídeos do celular.',bg:'#4B3F8F',l:'C',c:'#fff'},
 {id:'mir',n:'Miracast',d:'Receba a tela do celular.',bg:'#1F7A8C',i:P.cast}];
 var FIX=[
-{id:'games',n:'Jogos',d:'Jogos retrô de 16 bits. Em breve, com RetroArch.',bg:'#6A4FB3',i:P.pad,w:64,x:1},
+{id:'games',n:'Jogos',d:'Jogos retrô de 16 bits.',bg:'#6A4FB3',i:P.pad,w:64,x:1},
 {id:'files',n:'Arquivos',d:function(){return usb?'Armazenamento interno e pendrive conectado.':'Armazenamento interno. Pendrive: não conectado.'},bg:'#8A6A2F',i:P.fold,x:1},
 {id:'hdmi',n:'HDMI',d:'Entrada externa: videogame, notebook ou TV box.',bg:'#2F5DA8',i:P.hdmi,x:1},
 {id:'manage',n:'Gerenciar atalhos',d:'Adicione ou remova os atalhos da tela inicial.',bg:'#4A5568',i:P.mng,x:1}];
@@ -144,7 +150,7 @@ function render(){var L=list();tr.innerHTML='';L.forEach(function(it,k){var e=do
 function show(){var L=list(),ts=tr.children,bs=topEl.querySelectorAll('.tb'),k;for(k=0;k<ts.length;k++)ts[k].classList.toggle('on',z==='row'&&k===cur);for(k=0;k<bs.length;k++)bs[k].classList.toggle('on',z==='top'&&k===tc);var max=Math.max(0,L.length*186-18-1152),off=Math.max(0,Math.min((cur-1)*186,max));tr.style.transform='translateX('+(-off)+'px)';var f=z==='top'?TOP[tc]:L[cur];info.classList.add('f');setTimeout(function(){ti.textContent=f.n;de.textContent=txt(f);info.classList.remove('f')},110)}
 function go(k){if(k<0||k>=list().length){snd(520,.06,.12);return}snd(k>cur?1900:1650,.05,.2);cur=k;show()}
 function topGo(k){if(k<0||k>2){snd(520,.06,.12);return}snd(k>tc?1900:1650,.05,.2);tc=k;show()}
-function open_(){var it=list()[cur];if(it.id==='manage'){openM();return}if(it.id==='games'){snd(900,.1,.25);say('Em breve: jogos de 16 bits com RetroArch');return}snd(900,.1,.25);say('No projetor, abriria: '+it.n)}
+function open_(){var it=list()[cur];if(it.id==='manage'){openM();return}if(it.id==='games'){openG();return}snd(900,.1,.25);say('No projetor, abriria: '+it.n)}
 function topOpen(){openST(TOP[tc].c,TOP[tc].pf)}
 function openM(){z='mg';mz='slot';ms=0;ml=0;mg.classList.add('s');snd(900,.1,.25);mrender()}
 function closeM(){z='row';mg.classList.remove('s');cur=list().length-1;snd(1650,.05,.2);render()}
@@ -156,7 +162,7 @@ function mnav(d){var av=avail(),ok=true;if(d==='b'){closeM();return}
 if(mz==='slot'){if(d==='l'){ok=ms>0;if(ok)ms--}else if(d==='r'){ok=ms<6;if(ok)ms++}else if(d==='d'){ok=av.length>0;if(ok){mz='list';ml=Math.min(ml,av.length-1)}}else if(d==='o'){if(pinned[ms]){say('Removido: '+byId(pinned.splice(ms,1)[0]).n);snd(700,.08,.22);ok=null}else if(av.length){mz='list'}else ok=false}else ok=false}
 else{if(d==='l'){ok=ml>0;if(ok)ml--}else if(d==='r'){ok=ml<av.length-1;if(ok)ml++}else if(d==='u'){if(ml<4)mz='slot';else ml-=4}else if(d==='d'){ok=ml+4<av.length;if(ok)ml+=4}else if(d==='o'){if(pinned.length>=7){say('Limite de 7 atalhos. Remova um antes.');ok=false}else{say('Adicionado: '+av[ml].n);pinned.push(av[ml].id);snd(900,.1,.25);ml=Math.max(0,Math.min(ml,av.length-2));ok=null}}}
 if(ok===true)snd(1800,.05,.2);else if(ok===false)snd(520,.06,.12);mrender()}
-function nav(d){if(z==='mg'){mnav(d);return}if(z==='st'){snav(d);return}
+function nav(d){if(z==='mg'){mnav(d);return}if(z==='gm'){gnav(d);return}if(z==='st'){snav(d);return}
 if(z==='top'){if(d==='l')topGo(tc-1);else if(d==='r')topGo(tc+1);else if(d==='d'){z='row';snd(1750,.05,.2);show()}else if(d==='o')topOpen();else snd(520,.06,.12);return}
 if(d==='l')go(cur-1);else if(d==='r')go(cur+1);else if(d==='u'){z='top';snd(1750,.05,.2);show()}else if(d==='o')open_();else if(d==='d')snd(520,.06,.12)}
 document.addEventListener('keydown',function(e){var k=e.key;if(k==='p'||k==='P'){usb=!usb;say(usb?'Pendrive conectado':'Pendrive removido');show();return}var d={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d',Enter:'o',' ':'o',Escape:'b',Backspace:'b'}[k];if(!d)return;e.preventDefault();nav(d)});
@@ -178,6 +184,7 @@ var CATS=[
 {n:'Rede',i:P.wifi,note:'No aparelho, abre a tela original de Wi-Fi.',rows:[tog('Wi-Fi','wifi'),inf('Rede atual',function(){return S.wifi?'Conectado':'Desconectado'}),act('Buscar redes')]},
 {n:'Bluetooth',i:P.bt,note:'No aparelho, abre a tela original de Bluetooth.',rows:[tog('Bluetooth','bt'),act('Dispositivos pareados'),act('Buscar dispositivos')]},
 {n:'Idioma',i:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',note:'No aparelho, abre a tela original de idioma.',rows:[sel('Idioma do aparelho','lang',['Português (Brasil)','English','Español']),sel('Método de entrada','ime',['Teclado Android'])]},
+{n:'Aplicativos',i:P.app,note:'Todos os apps instalados. OK abre; segure OK por 2 segundos para desinstalar.',rows:[act('YouTube'),act('Unit TV'),act('Cast Receiver'),act('Miracast'),act('Arquivos'),act('Jogos HY300')]},
 {n:'Projeção',i:P.prj,note:'Estes ajustes exigem permissão de sistema: no aparelho, abrem as telas originais de projeção.',rows:[sld('Zoom da tela',function(){return S.zoom},function(v){S.zoom=v},50,100),sel('Método de projeção','pm',['Projeção desktop','Projeção traseira de mesa','Elenco de içamento','Projeção traseira']),act('Correção de keystone'),{t:'sub',n:'Brilho e cor',rows:[sel('Modo de imagem','mode',['Standard','Cinema','Dinâmico'])].concat(['Brilho','Contraste','Tonalidade','Saturação','Nitidez'].map(function(n,i){return sld(n,function(){return S.pic[i]},function(v){S.pic[i]=v},0,100)}))}]},
 {n:'Áudio',i:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/>',note:'Volume e bip são controlados pelo próprio launcher.',rows:[sld('Volume do projetor',function(){return S.vol},function(v){S.vol=v},0,100),{t:'tog',n:'Bip ao mover o cursor da tela inicial',g:function(){return muted?0:1},s:function(v){muted=!v}}]},
 {n:'Data e hora',i:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',note:'No aparelho, abre a tela original de data e hora.',rows:[tog('Atualização automática','auto'),sel('Fuso horário','tz',TZ.map(function(x){return x[0]}),clk,function(){return S.auto},'Desative a atualização automática para alterar o fuso'),sel('Formato de hora','h24',['12 horas','24 horas'],clk),sel('Formato de data','df',DF),inf('Agora',function(){return fmtD()+' · '+fmtT()})]},
@@ -197,6 +204,11 @@ if(ok)snd(1800,.05,.2);else snd(520,.06,.12);srender()}
 $('sm').onclick=function(e){var n=e.target.closest('.mi');if(n){sc=+n.dataset.k;sf='pane';sr=0;stk=[];snd(1800,.05,.2);srender()}};
 $('sp').onclick=function(e){var n=e.target.closest('.rw');if(n){sf='pane';sr=+n.dataset.k;snav('o')}};
 $('sx').onclick=closeST;
+var GAMES=['Choplifter III','Donkey Kong Country','Donkey Kong Country 2','Donkey Kong Country 3','Goof Troop','Super Mario Kart','Super Mario World'],gi=0;
+function grender(){var h='';GAMES.forEach(function(g,k){h+='<div class="rw'+(k===gi?' on':'')+'"><span>'+g+'</span></div>'});$('gl').innerHTML=h}
+function openG(){z='gm';gi=0;$('gm').classList.add('s');snd(900,.1,.25);grender()}
+function closeG(){z='row';$('gm').classList.remove('s');snd(1650,.05,.2);show()}
+function gnav(d){var ok=true;if(d==='b'){closeG();return}if(d==='u'){ok=gi>0;if(ok)gi--}else if(d==='d'){ok=gi<GAMES.length-1;if(ok)gi++}else if(d==='o'){snd(900,.1,.25);say('Sem controle, o app pede para conectar um. Com controle, abre '+GAMES[gi]);ok=null}else ok=false;if(ok===true)snd(1800,.05,.2);else if(ok===false)snd(520,.06,.12);grender()}
 clk();
 render();
 </script>

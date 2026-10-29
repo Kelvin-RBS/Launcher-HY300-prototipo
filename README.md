@@ -1,10 +1,12 @@
+**Português (BR)** · [English](README.en.md)
+
 # Launcher HY300 — protótipo
 
 ▶ **Veja como o projeto está ficando:** [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo/)
 
 Um launcher novo, leve e com visual tecnológico para o projetor **HY300** (Android 11, Allwinner H713), mantendo as funções do original e com o objetivo de transformá-lo em um **projetor gamer**.
 
-> **Status:** protótipo de design navegável, análise técnica do launcher original, **launcher 0.3 (compila e roda no projetor)** e o **app Jogos HY300 0.1**, ainda **não testado no aparelho**.
+> **Status:** protótipo de design navegável, análise técnica do launcher original, **launcher 0.4** e **app Jogos HY300 0.2** (com motor próprio de emulação). Os dois **compilam e rodam no projetor**. O desempenho dos jogos ainda **não foi medido**.
 
 ## Como este projeto é feito
 A ideia é usar **IA** e **REA** do começo ao fim:
@@ -17,7 +19,7 @@ O autor define o rumo, testa no aparelho e decide o que entra.
 O HY300 já projeta uma imagem grande em qualquer parede. Falta um sistema à altura: rápido, bonito, fácil de usar só com o controle remoto e pensado para jogar. A visão do projeto:
 
 - **Tela inicial limpa**, com atalhos de apps, relógio e acesso rápido a rede, Bluetooth e configurações.
-- **Jogos retrô de 16 bits** (começando pelo Super Nintendo) em um **app próprio de jogos**, com o visual do launcher, baseado no Snes9x EX+ (código aberto) e compatível com controles Bluetooth em geral.
+- **Jogos retrô de 16 bits** (começando pelo Super Nintendo) em um **app próprio de jogos**, com o visual do launcher e um **motor próprio** (núcleo Snes9x), sem controle de toque e compatível com controles Bluetooth em geral. Durante o jogo, **segurar Start por 3 segundos** pergunta se quer fechar o jogo e voltar à lista.
 - **Consoles e PC pelo HDMI**, com a entrada a um clique.
 - **Controle Bluetooth ou USB** para jogar (o controle remoto do projetor só tem direcional e OK).
 - **Reversível por enquanto:** o launcher é instalado como app comum. A ideia futura é **trocar o firmware**.
@@ -33,7 +35,8 @@ Ele é pesado para o hardware, envia dados para servidores de rastreamento (Baid
 | **Atalhos editáveis** | Até 7 apps instalados, à esquerda da fileira |
 | **Atalhos fixos** | **Jogos** (ícone de controle estilo Super Nintendo; abre o app Jogos HY300), **Arquivos** (interno e pendrive), **HDMI** e **Gerenciar atalhos** |
 | **Topo** | Rede, Bluetooth e Configurações (engrenagem), todos navegáveis, e o relógio |
-| **Configurações** | Rede, Bluetooth, Idioma, Projeção (zoom, método, keystone, brilho e cor), Áudio (volume e bip do cursor), Data e hora, Sobre o dispositivo |
+| **Configurações** | Rede, Bluetooth, Idioma, **Aplicativos** (todos os apps; OK abre, segurar OK por 2 s desinstala), Projeção (zoom, método, keystone, brilho e cor), Áudio (volume e bip do cursor), Data e hora e, por último, Sobre o dispositivo |
+| **Jogos** | App separado com lista só com o nome dos jogos, pedido de controle Bluetooth e menu de pausa em português |
 | **Som** | Tique ao mover o cursor, desligável em Áudio |
 | **Fundo** | Lago ao pôr do sol (gerado por IA) |
 
@@ -65,24 +68,26 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 - O aparelho tem **uma** porta HDMI física, mas o sistema declara três HDMI e um AV. O launcher mostra só "HDMI".
 - **Atualização local** (pendrive) dispara um serviço de sistema (`android.rockchip.update.service`); a **online** é delegada ao `com.htc.htcotaupdate`. O launcher novo abre as telas originais ([`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md)).
 - O próprio app de configurações (`htcsettings`) também tem analytics da Baidu; só um firmware próprio remove.
+- Um app pré-instalado (Office Suite) rodava em segundo plano com cerca de 143 MB de memória e nenhum app do sistema analisado depende dele. Apps assim podem ser removidos para o usuário (de forma reversível).
 - Sem bateria: as telas de bateria baixa não entram.
 - Rastreamento no original: analytics da Baidu e API de loja da fabricante. O launcher novo não inclui nada disso.
 
 ## Próximos passos
-1. Instalar o app Jogos HY300 e testar o primeiro jogo (Super Mario World) com um controle Bluetooth ([`docs/14-app-jogos.md`](docs/14-app-jogos.md)).
-2. Testar o motor de emulação próprio, sem controle de toque ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
-3. Compilar e testar o projeto Android no projetor ([`android/README.md`](android/README.md)), depois as telas próprias de Configurações e a atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
-4. Instalar no aparelho, definir como padrão e validar HDMI e Projeção.
+1. Medir o desempenho dos jogos no projetor e afinar o som e a latência ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
+2. Telas próprias de Configurações no launcher, abrindo as originais quando o ajuste exigir permissão de sistema ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
+3. Atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
+4. Mais sistemas de jogos, como NES (hoje só Super Nintendo).
 5. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 
 ## Avisos
-- Este repositório **não** inclui APKs, dumps do aparelho nem jogos (ROMs). Veja `.gitignore`.
+- Este repositório **não** inclui APKs, dumps do aparelho, jogos (ROMs) nem o núcleo do emulador (`.so`). Veja `.gitignore`.
 - Por enquanto, o launcher novo não altera o firmware nem precisa de root. **Trocar o firmware é um objetivo futuro e pode inutilizar o aparelho:** guarde uma cópia do original e tenha um plano de recuperação antes.
 - Use apenas jogos que você tem direito de usar.
 - Projeto não afiliado ao fabricante do HY300, ao Snes9x/EmuEx, à Nintendo nem à Anthropic.
 
 ## Créditos
 - Plano de fundo gerado por IA.
+- Núcleo de emulação: **Snes9x** (pela interface libretro), baixado do site do libretro e **não incluído** aqui. A licença do Snes9x é não comercial.
 - Análise e protótipo feitos com IA (Claude, da Anthropic) e REA.
 
 ## Licença

@@ -47,7 +47,6 @@ class GamesHomeActivity : Activity() {
         val mp = ViewGroup.LayoutParams.MATCH_PARENT
         val wc = ViewGroup.LayoutParams.WRAP_CONTENT
         val root = FrameLayout(this)
-        root.clipChildren = false
         root.setBackgroundColor(Color.BLACK)
 
         root.addView(ImageView(this).apply {

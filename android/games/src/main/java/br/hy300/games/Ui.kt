@@ -38,7 +38,6 @@ object Ui {
             bg.setStroke(ctx.dp(if (has) 4 else 2), Color.parseColor(if (has) "#FFFFFF" else NORMAL_LINE))
             (v as TextView).setTextColor(if (has) Color.WHITE else Color.parseColor("#C5D2EA"))
             v.setTypeface(null, if (has) Typeface.BOLD else Typeface.NORMAL)
-            v.animate().scaleX(if (has) 1.06f else 1f).scaleY(if (has) 1.06f else 1f).setDuration(100).start()
         }
         return button
     }
