@@ -28,7 +28,7 @@ object AppRepo {
     val DEFAULT_PINNED = listOf(
         "com.netflix.mediaclient",
         "com.google.android.youtube.tv",
-        "com.global.unitviptv",
+        "br.hy300.tv",
         "tv.pluto.android",
         "com.mercadolibre.android.mplay_tv",
         "cm.aptoidetv.pt",

@@ -64,8 +64,7 @@ class SettingsActivity : Activity() {
             val version = Emulator.versionName(packageManager)
             lines.add("O Super Nintendo usa o Snes9x EX+ " + (version ?: "(não instalado)"))
         }
-        return lines.joinToString("
-")
+        return lines.joinToString("\n")
     }
 
     private fun buildUi(): ScrollView {
