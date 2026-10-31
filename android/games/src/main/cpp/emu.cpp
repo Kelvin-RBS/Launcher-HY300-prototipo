@@ -7,6 +7,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <time.h>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -66,6 +69,34 @@ static std::vector<uint8_t> g_rom;
 static std::string g_romname;
 static std::string g_dir = ".";
 static std::string g_err;
+// ---- medições de vídeo (diagnóstico de atraso) ----
+static double now_ms() {
+    timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
+}
+static double g_lockSum = 0, g_lockMax = 0, g_cbSum = 0, g_cbMax = 0;
+static long g_vidN = 0;
+static long g_dropped = 0;       // quadros descartados pela "fila de vídeo curta"
+static volatile int g_trim = 0;  // 1 = descarta um quadro quando a fila de vídeo enche
+static int g_skip = 0;
+static int g_sinceDrop = 1000;  // quadros desde o último descarte (limita a 1 descarte a cada 30 quadros)
+
+static std::string g_corelog;  // o que o núcleo disse (erros e avisos), para explicar uma recusa
+
+struct retro_log_callback { void (*log)(int level, const char *fmt, ...); };
+static void core_log(int level, const char *fmt, ...) {
+    char line[512];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(line, sizeof(line), fmt, ap);
+    va_end(ap);
+    __android_log_print(level >= 3 ? ANDROID_LOG_ERROR : ANDROID_LOG_INFO, "hy300core", "%s", line);
+    if (level >= 1) {  // 0 = depuração (ignora)
+        g_corelog += line;
+        if (g_corelog.size() > 1500) g_corelog.erase(0, g_corelog.size() - 1500);
+    }
+}
 
 static bool env_cb(unsigned cmd, void *data) {
     switch (cmd & 0xFFFF) {
@@ -77,6 +108,7 @@ static bool env_cb(unsigned cmd, void *data) {
             if (f == 0 || f == 1 || f == 2) { g_pixfmt = f; return true; }
             return false;
         }
+        case 27: ((retro_log_callback *)data)->log = core_log; return true;  // GET_LOG_INTERFACE
         case 16: return true;                                        // SET_VARIABLES
         case 17: *(bool *)data = false; return true;                 // GET_VARIABLE_UPDATE
         case 11: return true;                                        // SET_INPUT_DESCRIPTORS
@@ -93,13 +125,26 @@ static void video_cb(const void *data, unsigned width, unsigned height, size_t p
     if (!data) return;  // quadro repetido
     std::lock_guard<std::mutex> lock(g_window_mutex);
     if (!g_window) return;
+    g_sinceDrop++;
+    if (g_trim && g_skip > 0) {  // deixa a fila de vídeo esvaziar um quadro
+        g_skip--;
+        g_dropped++;
+        g_sinceDrop = 0;
+        return;
+    }
+    double tStart = now_ms();
     if ((int)width != g_w || (int)height != g_h) {
         ANativeWindow_setBuffersGeometry(g_window, (int32_t)width, (int32_t)height, WINDOW_FORMAT_RGB_565);
         g_w = (int)width;
         g_h = (int)height;
     }
     ANativeWindow_Buffer buf;
-    if (ANativeWindow_lock(g_window, &buf, nullptr) != 0) return;
+    double tLock = now_ms();
+    int lockRes = ANativeWindow_lock(g_window, &buf, nullptr);
+    // Tempo esperando um buffer livre: alto = a fila de vídeo está cheia (atraso extra de imagem)
+    double lockMs = now_ms() - tLock;
+    if (g_trim && lockMs > 5.0 && g_sinceDrop >= 30) g_skip = 1;
+    if (lockRes != 0) return;
     unsigned rows = height < (unsigned)buf.height ? height : (unsigned)buf.height;
     unsigned cols = width < (unsigned)buf.width ? width : (unsigned)buf.width;
     const uint8_t *src = (const uint8_t *)data;
@@ -125,6 +170,12 @@ static void video_cb(const void *data, unsigned width, unsigned height, size_t p
         }
     }
     ANativeWindow_unlockAndPost(g_window);
+    double cbMs = now_ms() - tStart;
+    g_lockSum += lockMs;
+    if (lockMs > g_lockMax) g_lockMax = lockMs;
+    g_cbSum += cbMs;
+    if (cbMs > g_cbMax) g_cbMax = cbMs;
+    g_vidN++;
 }
 
 static size_t audio_batch_cb(const int16_t *data, size_t frames) {
@@ -216,7 +267,31 @@ JNIEXPORT jboolean JNICALL Java_br_hy300_games_NativeEmu_loadGame(JNIEnv *env, j
     g_w = 0;
     g_h = 0;
     g_audio_len = 0;
+    g_corelog.clear();
     return p_load_game(&info) ? JNI_TRUE : JNI_FALSE;
+}
+
+// [média da espera por buffer, máxima, média do tempo total do quadro de vídeo, máxima, quadros, descartados]
+// e zera os acumuladores (chamar a cada segundo, da thread do emulador).
+JNIEXPORT jdoubleArray JNICALL Java_br_hy300_games_NativeEmu_videoStats(JNIEnv *env, jobject) {
+    long n = g_vidN;
+    double v[6] = {n ? g_lockSum / n : 0.0, g_lockMax, n ? g_cbSum / n : 0.0, g_cbMax, (double)n, (double)g_dropped};
+    g_lockSum = g_lockMax = g_cbSum = g_cbMax = 0;
+    g_vidN = 0;
+    jdoubleArray arr = env->NewDoubleArray(6);
+    env->SetDoubleArrayRegion(arr, 0, 6, v);
+    return arr;
+}
+
+JNIEXPORT void JNICALL Java_br_hy300_games_NativeEmu_setVideoTrim(JNIEnv *, jobject, jint on) {
+    g_trim = on ? 1 : 0;
+    g_skip = 0;
+    g_dropped = 0;
+    g_sinceDrop = 1000;
+}
+
+JNIEXPORT jstring JNICALL Java_br_hy300_games_NativeEmu_lastLog(JNIEnv *env, jobject) {
+    return env->NewStringUTF(g_corelog.c_str());
 }
 
 JNIEXPORT jdoubleArray JNICALL Java_br_hy300_games_NativeEmu_avInfo(JNIEnv *env, jobject) {

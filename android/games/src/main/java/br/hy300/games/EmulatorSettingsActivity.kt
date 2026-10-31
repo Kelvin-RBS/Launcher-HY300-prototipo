@@ -41,11 +41,13 @@ class EmulatorSettingsActivity : Activity() {
             { EmuPrefs.layout(this) }, { EmuPrefs.setLayout(this, it) }), rowLp())
         col.addView(Ui.optionRow(this, "Latência do áudio", listOf("Baixa", "Média", "Alta"),
             { EmuPrefs.latency(this) }, { EmuPrefs.setLatency(this, it) }), rowLp())
+        col.addView(Ui.optionRow(this, "Fila de vídeo curta (experimental)", listOf("Desligada", "Ligada"),
+            { EmuPrefs.videoTrim(this) }, { EmuPrefs.setVideoTrim(this, it) }), rowLp())
         col.addView(Ui.optionRow(this, "Mostrar fps e diagnóstico", listOf("Não", "Sim"),
             { EmuPrefs.showFps(this) }, { EmuPrefs.setShowFps(this, it) }), rowLp())
 
         col.addView(TextView(this).apply {
-            text = "Dica: a latência do áudio começa baixa e aumenta sozinha se o som falhar. O diagnóstico mostra fps, atraso do áudio, falhas e o quadro mais lento. Se os botões A e B parecerem trocados, mude \"Botões do controle\"."
+            text = "Dica: a latência do áudio começa baixa e aumenta sozinha se o som falhar. No menu do jogo (Select+Start), \"Diagnóstico de atraso\" mostra de onde vem o atraso. A fila de vídeo curta descarta um quadro de vez em quando para a imagem não ficar atrasada; compare com o diagnóstico. Se os botões A e B parecerem trocados, mude \"Botões do controle\"."
             textSize = 13f
             setTextColor(Color.parseColor("#A9B8D2"))
             setPadding(0, dp(12), 0, 0)

@@ -44,6 +44,22 @@ Sem o núcleo (ou se a parte nativa não compilar), o app continua usando o **Sn
 - A thread do emulador usa prioridade de áudio.
 - **Diagnóstico:** em Ajustes do emulador, "Mostrar fps e diagnóstico" exibe `fps · áudio (ms) · falhas · emulação máx (ms)`. Leitura: fps abaixo de 60 ou "emulação máx" perto de 16 ms = o processador não dá conta; "falhas" subindo = som picotando; tudo bom e ainda assim com atraso = a causa está fora do app (controle Bluetooth ou processamento de imagem do projetor).
 
+## Diagnóstico de atraso (v22)
+No menu do jogo (Select+Start): **Diagnóstico de atraso**. O relatório também é salvo em `/storage/emulated/0/Jogos/diagnostico-atraso.txt`; no PC, `scripts/06-ler-diagnostico.ps1` copia e mostra o arquivo.
+
+Como usar: jogue uns 30 segundos apertando botões e mexendo no direcional e no analógico, e só então abra o diagnóstico. Para comparar mudanças (por exemplo a "fila de vídeo curta"), faça o mesmo roteiro antes e depois.
+
+| Medida | O que indica |
+|---|---|
+| Botões / direcional (ms até o jogo) | O normal para botões é de 1 a 4 ms. O direcional chega como evento de movimento, que o Android agrupa por quadro de tela (até ~16 ms a mais); isso o app não consegue evitar no Android 11 |
+| Intervalo entre envios do controle | Perto de 8 ms é bom. 15 ms ou mais: o controle ou o Bluetooth enviam pouco |
+| Tempo por quadro de emulação | Acima de ~12 ms de média o processador está no limite (o orçamento é 16,6 ms) |
+| Espera por buffer de vídeo | Acima de ~4 ms: a fila de vídeo está cheia e a imagem fica 1 a 2 quadros atrasada |
+| Atraso real do som | Soma buffer do app, caminho do sistema e saída. Bluetooth costuma passar de 100 ms |
+| Caminho rápido: não | O Android não liberou a baixa latência de áudio |
+
+Limites: o diagnóstico **não mede** o rádio Bluetooth do controle nem o processamento de imagem do projetor. O número "aperto até a imagem" é uma estimativa (inclui ~1,5 quadro de tela). Para separar o que sobra, compare com um controle com fio e desligue efeitos de imagem do projetor.
+
 ## O que foi testado
 - **No projetor (testado pelo autor):** o motor próprio abre o jogo com o núcleo `snes9x2010`, o menu de pausa (Select + Start), a pergunta "Fechar o jogo?" (segurar Start por 3 s), os ajustes e o reconhecimento de um controle Xbox Bluetooth funcionam.
 - A lógica do C++ foi testada **no computador** com um núcleo libretro falso: carregar o núcleo, entrada, áudio, estado e save passaram.

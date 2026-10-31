@@ -75,14 +75,13 @@ Main documents (Portuguese): [`docs/05-design.md`](docs/05-design.md) · [`docs/
 - Tracking in the original: Baidu analytics and a manufacturer store API. The new launcher includes none of it.
 
 ## Next steps
-1. **Test v20 on the projector:** cursor tick, new games showing up in the list by themselves, and lower audio delay (turn on "Show fps and diagnostics" in the emulator settings).
+1. **Test v22 on the projector:** play for about 30 seconds using the buttons and the d-pad, open **Diagnóstico de atraso** (delay diagnostics) in the game menu (Select+Start) and read the conclusions; try the "short video queue" and measure again.
 2. Measure game performance and delay, and tune the sound ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
 3. Test NES (needs the `fceumm` core) and add other systems.
 4. **Phone remote control:** the launcher runs a small server on the local Wi-Fi network and the phone controls the projector (d-pad, OK, Back, Home) through a web page, with a PIN shown on screen. Start with the launcher and the games; outside them it needs an accessibility service.
-5. **Integrated live TV:** the `tv` module (TV AO VIVO) is already in the repository; study the projector's UniTV app with REA to reuse it or replicate live TV in the launcher, without bypassing logins or DRM.
-6. Own Settings screens in the launcher, opening the original ones when a setting needs system permission ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
-7. Launcher updates through GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
-8. Future: custom firmware ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
+5. Own Settings screens in the launcher, opening the original ones when a setting needs system permission ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
+6. Launcher updates through GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
+7. Future: custom firmware ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 
 ## Notices
 - This repository does **not** include APKs, device dumps, games (ROMs) or the emulator core (`.so`). See `.gitignore`.

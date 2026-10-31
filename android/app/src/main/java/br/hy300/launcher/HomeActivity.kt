@@ -36,6 +36,9 @@ class HomeActivity : Activity() {
         super.onCreate(savedInstanceState)
         sfx = Sfx(this)
         setContentView(buildUi())
+        // O Android toca o próprio som de navegação nos botões do topo; desligado aqui para
+        // só tocar o tique do launcher (um som, igual em toda a tela).
+        window.decorView.isSoundEffectsEnabled = false
     }
 
     override fun onDestroy() {

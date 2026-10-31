@@ -73,14 +73,13 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 - Rastreamento no original: analytics da Baidu e API de loja da fabricante. O launcher novo não inclui nada disso.
 
 ## Próximos passos
-1. **Testar no projetor a v20:** tique do cursor, jogos novos entrando sozinhos na lista e o áudio com menos atraso (ligue "Mostrar fps e diagnóstico" nos Ajustes do emulador).
+1. **Testar no projetor a v22:** jogue uns 30 segundos mexendo nos botões e no direcional, abra **Diagnóstico de atraso** no menu do jogo (Select+Start) e leia as conclusões; teste a "fila de vídeo curta" e meça de novo.
 2. Medir o desempenho e o atraso dos jogos e afinar o som ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
 3. Testar o NES (precisa do núcleo `fceumm`) e acrescentar outros sistemas.
 4. **Controle remoto pelo celular:** o launcher abre um servidor na rede Wi-Fi local e o celular controla o projetor (direcional, OK, Voltar, Home) por uma página web, com PIN mostrado na tela. Começar pelo launcher e pelos jogos; fora deles depende de um serviço de acessibilidade.
-5. **TV ao vivo integrada:** o módulo `tv` (TV AO VIVO) já existe no repositório; estudar com o REA o app UniTV do projetor para reaproveitá-lo ou replicar a TV ao vivo no launcher, sem burlar login nem DRM.
-6. Telas próprias de Configurações no launcher, abrindo as originais quando o ajuste exigir permissão de sistema ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
-7. Atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
-8. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
+5. Telas próprias de Configurações no launcher, abrindo as originais quando o ajuste exigir permissão de sistema ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
+6. Atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
+7. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 
 ## Avisos
 - Este repositório **não** inclui APKs, dumps do aparelho, jogos (ROMs) nem o núcleo do emulador (`.so`). Veja `.gitignore`.

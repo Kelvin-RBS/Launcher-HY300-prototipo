@@ -18,6 +18,12 @@ object NativeEmu {
 
     external fun loadCore(path: String, dir: String): Boolean
     external fun lastError(): String
+    /** Últimas mensagens de erro/aviso do núcleo (explicam, por exemplo, por que ele recusou um jogo). */
+    external fun lastLog(): String
+    /** [espera média por buffer de vídeo (ms), máxima, tempo médio do quadro de vídeo, máximo, quadros, descartados]; zera a contagem. */
+    external fun videoStats(): DoubleArray
+    /** 1 = descarta um quadro quando a fila de vídeo enche (menos atraso de imagem; experimental). */
+    external fun setVideoTrim(on: Int)
     external fun loadGame(data: ByteArray, name: String): Boolean
     /** [fps, taxa de áudio, largura, altura, proporção] */
     external fun avInfo(): DoubleArray

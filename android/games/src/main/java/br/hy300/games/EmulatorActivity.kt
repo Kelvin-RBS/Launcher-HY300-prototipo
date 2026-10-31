@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioManager
+import android.media.AudioTimestamp
 import android.media.AudioTrack
 import android.os.Bundle
 import android.os.Handler
@@ -56,6 +57,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
     private var keyMask = 0
     private var axisMask = 0
     private var thread: Thread? = null
+    private val probe = LatencyProbe()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,6 +156,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         addItem("Salvar estado") { saveState() }
         addItem("Carregar estado") { loadState() }
         addItem("Ajustes") { startActivity(android.content.Intent(this, EmulatorSettingsActivity::class.java)) }
+        addItem("Diagnóstico de atraso") { showDiagnostic() }
         addItem("Sair para a lista de jogos") { finish() }
         root.addView(menu, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
 
@@ -303,6 +306,59 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
 
     // ------------------------------------------------------------------ emulação
 
+    /** Mostra o relatório de atraso (e o salva em Jogos/diagnostico-atraso.txt para ler pelo PC). */
+    private fun showDiagnostic() {
+        val stamp = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
+        var text = probe.report(game.title, stamp)
+        val saved = saveReport(text)
+        text += "\n" + (if (saved != null) "Relatório salvo em: " + saved else "Não foi possível salvar o relatório.")
+        val tv = TextView(this).apply {
+            this.text = text
+            typeface = android.graphics.Typeface.MONOSPACE
+            textSize = 12f
+            setTextColor(Color.parseColor("#EAF1FF"))
+            setPadding(dp(16), dp(8), dp(16), dp(8))
+        }
+        val scroll = android.widget.ScrollView(this).apply {
+            isFocusable = true
+            addView(tv)
+        }
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Diagnóstico de atraso")
+            .setView(scroll)
+            .setPositiveButton("Fechar", null)
+            .show()
+        scroll.requestFocus()
+    }
+
+    private fun saveReport(text: String): String? {
+        val targets = ArrayList<File>()
+        if (Catalog.canReadPublic()) targets.add(File(Catalog.PUBLIC_DIR, "diagnostico-atraso.txt"))
+        getExternalFilesDir(null)?.let { targets.add(File(it, "diagnostico-atraso.txt")) }
+        for (f in targets) {
+            try {
+                f.parentFile?.mkdirs()
+                f.writeText(text, Charsets.UTF_8)
+                return f.absolutePath
+            } catch (e: Exception) {
+                // tenta o próximo lugar
+            }
+        }
+        return null
+    }
+
+    /** Falha com explicação: mostra uma janela com o motivo (OK ou Voltar fecham o jogo). */
+    private fun failDialog(title: String, detail: String) {
+        ui.post {
+            android.app.AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(detail)
+                .setPositiveButton("OK") { _, _ -> finish() }
+                .setOnCancelListener { finish() }
+                .show()
+        }
+    }
+
     private fun fail(message: String) {
         ui.post {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
@@ -366,9 +422,13 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
             fail("Não foi possível ler o jogo")
             return
         }
-        if (!NativeEmu.loadGame(RomLoader.stripHeader(rom.second, game.system), rom.first)) {
+        val romBytes = RomLoader.stripHeader(rom.second, game.system)
+        if (!NativeEmu.loadGame(romBytes, rom.first)) {
+            val log = NativeEmu.lastLog().trim()
+            val detail = RomLoader.describe(romBytes, rom.first, game.system) +
+                (if (log.isNotEmpty()) "\n\nO núcleo disse:\n" + log.takeLast(600) else "\n\nO núcleo não explicou o motivo.")
             NativeEmu.unload()
-            fail("O núcleo não aceitou este jogo")
+            failDialog("O núcleo não aceitou este jogo", detail)
             return
         }
         coreReady = true
@@ -392,6 +452,28 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         val maxBufFrames = videoFrames(rate, 8)
         audio.play()
 
+        // Informações para o diagnóstico de atraso
+        NativeEmu.setVideoTrim(EmuPrefs.videoTrim(this))
+        probe.videoTrim = EmuPrefs.videoTrim(this) == 1
+        probe.coreFps = if (av[0] > 10.0) av[0] else 60.0
+        probe.nativeRate = rate
+        probe.fastTrack = try {
+            audio.getPerformanceMode() == AudioTrack.PERFORMANCE_MODE_LOW_LATENCY
+        } catch (e: Exception) {
+            null
+        }
+        try {
+            val am = getSystemService(AUDIO_SERVICE) as AudioManager
+            probe.burstFrames = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)?.toIntOrNull() ?: 0
+            probe.lowLatencyFeature = packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_AUDIO_LOW_LATENCY)
+        } catch (e: Exception) {
+            // segue sem essas informações
+        }
+        ui.post { probe.displayHz = windowManager.defaultDisplay.refreshRate }
+        var written = 0L       // quadros de áudio entregues ao sistema desde a última retomada
+        var headBase = 0L      // posição de reprodução na última retomada
+        var needBase = false
+
         val buf = ShortArray(8192)
         var wasPaused = false
         var frames = 0
@@ -406,6 +488,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
                     audio.pause()
                     audio.flush()
                     wasPaused = true
+                    needBase = true
                 }
                 try {
                     Thread.sleep(30)
@@ -415,11 +498,19 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
                 continue
             }
             if (wasPaused) {
+                if (needBase) {
+                    headBase = audio.getPlaybackHeadPosition().toLong() and 0xFFFFFFFFL
+                    written = 0L
+                    needBase = false
+                }
+                probe.resetFramePeriod()
                 audio.play()
                 wasPaused = false
                 lastUnderruns = -1
             }
             val mask = padMask
+            probe.consumePress(android.os.SystemClock.uptimeMillis())
+            probe.frameStart(System.nanoTime())
             if ((mask and COMBO) == COMBO) {
                 val now = System.nanoTime()
                 if (comboSince == 0L) {
@@ -452,7 +543,11 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
             }
             val emuMs = (System.nanoTime() - t0) / 1_000_000.0
             if (emuMs > worstMs) worstMs = emuMs
-            if (n > 0) audio.write(buf, 0, n)  // bloqueia quando o buffer enche: dá o ritmo da emulação
+            probe.addEmu(emuMs)
+            if (n > 0) {
+                audio.write(buf, 0, n)  // bloqueia quando o buffer enche: dá o ritmo da emulação
+                written += n / 2
+            }
             frames++
             val t = System.nanoTime()
             if (t - lastFps >= 1_000_000_000L) {
@@ -467,12 +562,39 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
                 }
                 lastUnderruns = under
                 val bufMs = audio.getBufferSizeInFrames() * 1000 / rate
+                probe.underruns = under
+                probe.bufferMs = bufMs
+                probe.fps = fps
+                // Atraso real do áudio: quadros entregues menos quadros já tocados (posição medida pelo sistema)
+                try {
+                    val ts = AudioTimestamp()
+                    if (audio.getTimestamp(ts)) {
+                        val played = ts.framePosition + (System.nanoTime() - ts.nanoTime) * rate / 1_000_000_000L
+                        val queued = headBase + written - played
+                        if (queued in 0..rate.toLong()) probe.addAudioLatency(queued * 1000.0 / rate)
+                    }
+                } catch (e: Exception) {
+                    // sem medição neste segundo
+                }
+                val vs = NativeEmu.videoStats()
+                probe.addVideo(vs[0], vs[1], vs[5].toLong(), vs[4].toLong())
+                if (probe.outputType < 0) {
+                    try {
+                        val d = audio.getRoutedDevice()
+                        if (d != null) {
+                            probe.outputType = d.type
+                            probe.outputName = d.productName?.toString() ?: ""
+                        }
+                    } catch (e: Exception) {
+                        // segue sem saber a saída
+                    }
+                }
                 val worst = worstMs
                 worstMs = 0.0
                 val show = EmuPrefs.showFps(this) == 1
                 ui.post {
                     fpsView.text = fps.toString() + " fps  \u00B7  áudio " + bufMs + " ms  \u00B7  falhas " + under +
-                        "  \u00B7  emulação máx " + String.format("%.1f", worst) + " ms"
+                        "  \u00B7  emulação máx " + String.format("%.1f", worst) + " ms\n" + probe.overlayLine()
                     fpsView.visibility = if (show) View.VISIBLE else View.GONE
                 }
             }
@@ -541,6 +663,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         val bit = bitFor(code)
         if (bit >= 0) {
             if (event.action == KeyEvent.ACTION_DOWN) {
+                if (event.repeatCount == 0) probe.notePress(event.eventTime, false)
                 keyMask = keyMask or (1 shl bit)
             } else if (event.action == KeyEvent.ACTION_UP) {
                 keyMask = keyMask and (1 shl bit).inv()
@@ -554,6 +677,9 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
     override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
         val joystick = (event.source and InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK
         if (!menuVisible && joystick && event.action == MotionEvent.ACTION_MOVE) {
+            // cadência real do controle (inclui os eventos que o Android juntou em um só)
+            for (h in 0 until event.historySize) probe.noteReport(event.getHistoricalEventTime(h))
+            probe.noteReport(event.eventTime)
             val hx = event.getAxisValue(MotionEvent.AXIS_HAT_X)
             val hy = event.getAxisValue(MotionEvent.AXIS_HAT_Y)
             val lx = event.getAxisValue(MotionEvent.AXIS_X)
@@ -565,6 +691,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
             if (hy > 0.5f || ly > 0.5f) m = m or (1 shl 5)
             if (event.getAxisValue(MotionEvent.AXIS_LTRIGGER) > 0.5f || event.getAxisValue(MotionEvent.AXIS_BRAKE) > 0.5f) m = m or (1 shl 10)
             if (event.getAxisValue(MotionEvent.AXIS_RTRIGGER) > 0.5f || event.getAxisValue(MotionEvent.AXIS_GAS) > 0.5f) m = m or (1 shl 11)
+            if ((m and axisMask.inv()) != 0) probe.notePress(event.eventTime, true)
             axisMask = m
             padMask = keyMask or axisMask
             return true

@@ -41,6 +41,23 @@ object RomLoader {
             null
         }
 
+    /** Resumo da ROM para explicar uma recusa do núcleo (tamanho e, no NES, cabeçalho iNES e mapper). */
+    fun describe(data: ByteArray, name: String, system: String): String {
+        val sb = StringBuilder("Arquivo: ").append(name).append(" (").append(data.size).append(" bytes)")
+        if (system == "nes") {
+            val ines = data.size >= 16 && data[0] == 0x4E.toByte() && data[1] == 0x45.toByte() &&
+                data[2] == 0x53.toByte() && data[3] == 0x1A.toByte()
+            sb.append("\nCabeçalho iNES: ").append(if (ines) "sim" else "NÃO (arquivo não parece uma ROM de NES)")
+            if (ines) {
+                val mapper = (data[7].toInt() and 0xF0) or ((data[6].toInt() and 0xFF) shr 4)
+                sb.append("\nMapper: ").append(mapper)
+                    .append(" · PRG ").append(data[4].toInt() and 0xFF).append("x16 KB")
+                    .append(" · CHR ").append(data[5].toInt() and 0xFF).append("x8 KB")
+            }
+        }
+        return sb.toString()
+    }
+
     /** Super Nintendo: tira o cabeçalho de 512 bytes que algumas ROMs antigas têm. NES: não mexe (o iNES precisa do cabeçalho). */
     fun stripHeader(data: ByteArray, system: String): ByteArray =
         if (system == "snes" && data.size % 1024 == 512) data.copyOfRange(512, data.size) else data

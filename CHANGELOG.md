@@ -1,5 +1,22 @@
 # Changelog
 
+## v22
+- App Jogos 0.4.0: **Diagnóstico de atraso.** No menu do jogo (Select+Start) há o novo item "Diagnóstico de atraso". Ele mostra um relatório com conclusões e o salva em `Jogos/diagnostico-atraso.txt` (para ler no PC: `scripts/06-ler-diagnostico.ps1`). Mede:
+  - **controle até o jogo:** quanto cada aperto espera para ser lido, separando botões (teclas) e direcional/analógico (eventos de movimento, que o Android agrupa por quadro de tela), e o intervalo real entre os envios do controle;
+  - **emulação:** tempo por quadro, ritmo dos quadros e quadros atrasados;
+  - **vídeo:** quanto o app espera por um buffer de vídeo livre (espera alta = fila cheia = 1 ou 2 quadros de atraso na imagem) e a taxa da tela;
+  - **áudio:** saída usada (HDMI, alto-falante, Bluetooth...), se o Android liberou o caminho rápido, a rajada do sistema e o **atraso real do som** (pela posição de reprodução do sistema).
+- Novo ajuste **"Fila de vídeo curta (experimental)"**: quando a fila de vídeo enche, o app descarta um quadro (no máximo 1 a cada 30) para a imagem não ficar atrasada. Vem desligada; compare com o diagnóstico antes e depois.
+- Com "Mostrar fps e diagnóstico" ligado, a tela mostra também uma linha com o atraso de entrada e a espera de vídeo.
+- Não mede (e o relatório avisa): o rádio Bluetooth do controle e o processamento de imagem do projetor.
+- Testado no computador: o relatório, com cenários simulados (bom, poucas medições, áudio Bluetooth, processador no limite, direcional agrupado, fila de vídeo cheia, tela em 50 Hz); a medição de vídeo e o descarte de quadros no motor C++ (janela falsa lenta). **O Kotlin dos dois módulos agora foi compilado** (kotlinc 1.9.24 contra o android.jar da API 30, sem erros), o que achou e corrigiu um erro de aspas. **Não testado:** nada rodou no projetor.
+
+## v21
+- Launcher 0.4.4: o tique dos botões do topo (Rede, Bluetooth, engrenagem) tocava duas vezes. A causa provável é o som de navegação do próprio Android somado ao tique do launcher; ele foi desligado nesta tela, então fica só o tique do launcher. Além disso, o tique nunca toca duas vezes em menos de 60 ms. **A confirmar** no aparelho.
+- App Jogos 0.3.2: quando o núcleo recusa um jogo, o app agora mostra uma janela com o motivo: o que o núcleo disse (o motor passou a receber o registro do núcleo) e dados do arquivo (tamanho e, no NES, cabeçalho iNES e mapper). Motivo: o NES (Super Mario Bros. 3) foi recusado pelo fceumm sem explicação.
+- **Removido o app TV AO VIVO** (módulo `tv`, `br.hy300.tv`) e o atalho padrão dele no launcher. O código continua no histórico do Git. Para tirá-lo do projetor: `adb uninstall br.hy300.tv`.
+- Testado no computador: o registro do núcleo (mensagem de erro capturada e limpa a cada jogo) com um núcleo falso. **Não testado:** o Kotlin não foi compilado e nada rodou no projetor.
+
 ## v20
 - Launcher 0.4.3: **tique ao mover o cursor** na tela inicial (atalhos e ícones do topo). O som é do próprio app (`SoundPool`), então não depende do ajuste de efeitos sonoros do sistema, e segue o volume principal do projetor. O foco que o app coloca sozinho ao abrir a tela não toca o tique.
 - App Jogos HY300 0.3.1: **jogos novos entram na lista sozinhos.** Com a lista aberta, o app confere as pastas `Jogos`, `Jogos/snes` e `Jogos/nes` a cada 2 s; quando a pasta fica igual em duas conferências seguidas (o arquivo terminou de copiar), a lista é atualizada sem tirar o cursor do lugar e aparece o aviso "Novo jogo: ...".

@@ -3,6 +3,7 @@ package br.hy300.launcher
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
+import android.os.SystemClock
 
 /**
  * Tique curto ao mover o cursor. Usa o SoundPool do próprio app, então não depende do ajuste
@@ -29,8 +30,14 @@ class Sfx(ctx: Context) {
         soundId = pool.load(ctx, R.raw.nav_tick, 1)
     }
 
+    private var lastTick = 0L
+
     fun tick() {
-        if (loaded && !muted) pool.play(soundId, 0.6f, 0.6f, 1, 0, 1f)
+        val now = SystemClock.uptimeMillis()
+        // Nunca toca duas vezes em menos de 60 ms (garantia contra tique duplicado)
+        if (!loaded || muted || now - lastTick < 60) return
+        lastTick = now
+        pool.play(soundId, 0.6f, 0.6f, 1, 0, 1f)
     }
 
     fun release() {

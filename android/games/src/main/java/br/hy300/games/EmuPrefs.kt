@@ -18,6 +18,10 @@ object EmuPrefs {
     fun latency(ctx: Context): Int = sp(ctx).getInt("latency", 0)
     fun setLatency(ctx: Context, v: Int) = sp(ctx).edit().putInt("latency", v).apply()
 
+    /** 1 = descarta um quadro quando a fila de vídeo enche (menos atraso de imagem; experimental). */
+    fun videoTrim(ctx: Context): Int = sp(ctx).getInt("videotrim", 0)
+    fun setVideoTrim(ctx: Context, v: Int) = sp(ctx).edit().putInt("videotrim", v).apply()
+
     /** 1 = mostrar quadros por segundo */
     fun showFps(ctx: Context): Int = sp(ctx).getInt("fps", 0)
     fun setShowFps(ctx: Context, v: Int) = sp(ctx).edit().putInt("fps", v).apply()
