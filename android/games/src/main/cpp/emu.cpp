@@ -10,6 +10,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include "resample.h"
 
 #define LOG_TAG "hy300emu"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
@@ -58,6 +59,9 @@ static volatile uint16_t g_input[2] = {0, 0};
 static const size_t AUDIO_MAX = 8192;
 static int16_t g_audio[AUDIO_MAX];
 static size_t g_audio_len = 0;
+static const size_t AUDIO_OUT_MAX = 16384;  // saída já convertida para a taxa do aparelho
+static int16_t g_audio_out[AUDIO_OUT_MAX];
+static Resampler g_resampler;
 static std::vector<uint8_t> g_rom;
 static std::string g_romname;
 static std::string g_dir = ".";
@@ -239,10 +243,16 @@ JNIEXPORT jint JNICALL Java_br_hy300_games_NativeEmu_runFrame(JNIEnv *env, jobje
     g_audio_len = 0;
     p_run();
     jsize cap = env->GetArrayLength(out);
-    jsize n = (jsize)g_audio_len;
+    // Converte para a taxa do aparelho (sem efeito se for a mesma taxa do núcleo)
+    jsize n = (jsize)g_resampler.process(g_audio, g_audio_len / 2, g_audio_out, AUDIO_OUT_MAX);
     if (n > cap) n = cap;
-    env->SetShortArrayRegion(out, 0, n, (const jshort *)g_audio);
+    env->SetShortArrayRegion(out, 0, n, (const jshort *)g_audio_out);
     return n;
+}
+
+// Define a taxa do núcleo e a taxa de saída do aparelho (chamar depois de carregar o jogo).
+JNIEXPORT void JNICALL Java_br_hy300_games_NativeEmu_setAudioRates(JNIEnv *, jobject, jdouble inRate, jdouble outRate) {
+    g_resampler.setup(inRate, outRate);
 }
 
 JNIEXPORT void JNICALL Java_br_hy300_games_NativeEmu_setInput(JNIEnv *, jobject, jint port, jint mask) {

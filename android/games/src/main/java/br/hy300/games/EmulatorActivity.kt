@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioFormat
+import android.media.AudioManager
 import android.media.AudioTrack
 import android.os.Bundle
 import android.os.Handler
@@ -309,11 +310,18 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         }
     }
 
+    /** Quadros de áudio equivalentes a [n] quadros de vídeo, na taxa [rate]. */
+    private fun videoFrames(rate: Int, n: Int): Int = (rate / 60) * n
+
+    /**
+     * Áudio na taxa nativa do aparelho (o motor converte): só assim o Android usa o caminho de
+     * baixa latência. A capacidade é grande, mas o tamanho em uso começa pequeno e só cresce se
+     * o som falhar (ver emuLoop).
+     */
     private fun createAudio(rate: Int): AudioTrack {
         val minBuf = AudioTrack.getMinBufferSize(rate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
-        val frames = 2 shl EmuPrefs.latency(this)  // 2, 4 ou 8 quadros de vídeo de áudio
-        val bytes = Math.max(minBuf, (rate / 60) * 4 * frames)
-        return AudioTrack.Builder()
+        val capacityFrames = Math.max(minBuf / 4, videoFrames(rate, 10))
+        val track = AudioTrack.Builder()
             .setAudioAttributes(
                 AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_GAME)
@@ -327,13 +335,20 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
                     .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
                     .build()
             )
-            .setBufferSizeInBytes(bytes)
+            .setBufferSizeInBytes(capacityFrames * 4)
             .setTransferMode(AudioTrack.MODE_STREAM)
             .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
             .build()
+        track.setBufferSizeInFrames(videoFrames(rate, 2 shl EmuPrefs.latency(this)))  // 2, 4 ou 8 quadros de vídeo
+        return track
     }
 
     private fun emuLoop() {
+        try {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO)
+        } catch (e: Exception) {
+            // segue com a prioridade normal
+        }
         val corePath = Engine.corePath(this, game.system)
         if (corePath == null) {
             fail("Núcleo do emulador não encontrado")
@@ -368,15 +383,21 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         }
 
         val av = NativeEmu.avInfo()
-        val rate = if (av[1] > 8000.0) av[1].toInt() else 32040
+        val coreRate = if (av[1] > 8000.0) av[1] else 32040.0
+        val nativeRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC)
+        val rate = if (nativeRate in 8000..192000) nativeRate else 48000
+        NativeEmu.setAudioRates(coreRate, rate.toDouble())
         ui.post { applyAspect() }
         val audio = createAudio(rate)
+        val maxBufFrames = videoFrames(rate, 8)
         audio.play()
 
-        val buf = ShortArray(4096)
+        val buf = ShortArray(8192)
         var wasPaused = false
         var frames = 0
         var lastFps = System.nanoTime()
+        var worstMs = 0.0          // quadro de emulação mais lento no último segundo
+        var lastUnderruns = -1     // -1 = ainda sem referência (ignora a falha natural do início)
         var comboSince = 0L
         var startSince = 0L
         while (running) {
@@ -396,6 +417,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
             if (wasPaused) {
                 audio.play()
                 wasPaused = false
+                lastUnderruns = -1
             }
             val mask = padMask
             if ((mask and COMBO) == COMBO) {
@@ -423,10 +445,13 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
             } else {
                 startSince = 0L
             }
+            val t0 = System.nanoTime()
             val n = synchronized(lock) {
                 NativeEmu.setInput(0, mask)
                 NativeEmu.runFrame(buf)
             }
+            val emuMs = (System.nanoTime() - t0) / 1_000_000.0
+            if (emuMs > worstMs) worstMs = emuMs
             if (n > 0) audio.write(buf, 0, n)  // bloqueia quando o buffer enche: dá o ritmo da emulação
             frames++
             val t = System.nanoTime()
@@ -434,9 +459,20 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
                 val fps = frames
                 frames = 0
                 lastFps = t
+                // Se o som falhou (buffer vazio), aumenta o buffer em 1 quadro de vídeo, até o limite
+                val under = audio.underrunCount
+                val curBuf = audio.getBufferSizeInFrames()
+                if (lastUnderruns >= 0 && under > lastUnderruns && curBuf < maxBufFrames) {
+                    audio.setBufferSizeInFrames(Math.min(maxBufFrames, curBuf + videoFrames(rate, 1)))
+                }
+                lastUnderruns = under
+                val bufMs = audio.getBufferSizeInFrames() * 1000 / rate
+                val worst = worstMs
+                worstMs = 0.0
                 val show = EmuPrefs.showFps(this) == 1
                 ui.post {
-                    fpsView.text = fps.toString() + " fps"
+                    fpsView.text = fps.toString() + " fps  \u00B7  áudio " + bufMs + " ms  \u00B7  falhas " + under +
+                        "  \u00B7  emulação máx " + String.format("%.1f", worst) + " ms"
                     fpsView.visibility = if (show) View.VISIBLE else View.GONE
                 }
             }

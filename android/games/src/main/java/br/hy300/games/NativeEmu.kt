@@ -21,6 +21,8 @@ object NativeEmu {
     external fun loadGame(data: ByteArray, name: String): Boolean
     /** [fps, taxa de áudio, largura, altura, proporção] */
     external fun avInfo(): DoubleArray
+    /** Taxa do núcleo e taxa de saída do aparelho: o motor converte o áudio entre as duas. */
+    external fun setAudioRates(inRate: Double, outRate: Double)
     external fun setSurface(surface: Surface?)
     /** Roda um quadro. Devolve quantas amostras de áudio (estéreo intercalado) foram escritas em [audio]. */
     external fun runFrame(audio: ShortArray): Int

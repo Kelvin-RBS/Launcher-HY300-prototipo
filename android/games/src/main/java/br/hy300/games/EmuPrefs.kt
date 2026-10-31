@@ -14,8 +14,8 @@ object EmuPrefs {
     fun layout(ctx: Context): Int = sp(ctx).getInt("layout", 0)
     fun setLayout(ctx: Context, v: Int) = sp(ctx).edit().putInt("layout", v).apply()
 
-    /** 0 = baixa, 1 = média, 2 = alta (maior = mais estável, com mais atraso) */
-    fun latency(ctx: Context): Int = sp(ctx).getInt("latency", 1)
+    /** 0 = baixa, 1 = média, 2 = alta (maior = mais estável, com mais atraso). Padrão: baixa; o app aumenta sozinho se o som falhar. */
+    fun latency(ctx: Context): Int = sp(ctx).getInt("latency", 0)
     fun setLatency(ctx: Context, v: Int) = sp(ctx).edit().putInt("latency", v).apply()
 
     /** 1 = mostrar quadros por segundo */

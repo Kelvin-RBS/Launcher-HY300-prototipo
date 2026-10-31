@@ -1,5 +1,12 @@
 # Changelog
 
+## v20
+- Launcher 0.4.3: **tique ao mover o cursor** na tela inicial (atalhos e ícones do topo). O som é do próprio app (`SoundPool`), então não depende do ajuste de efeitos sonoros do sistema, e segue o volume principal do projetor. O foco que o app coloca sozinho ao abrir a tela não toca o tique.
+- App Jogos HY300 0.3.1: **jogos novos entram na lista sozinhos.** Com a lista aberta, o app confere as pastas `Jogos`, `Jogos/snes` e `Jogos/nes` a cada 2 s; quando a pasta fica igual em duas conferências seguidas (o arquivo terminou de copiar), a lista é atualizada sem tirar o cursor do lugar e aparece o aviso "Novo jogo: ...".
+- Menos atraso no som: o motor agora **converte o áudio para a taxa nativa do aparelho** (normalmente 48000 Hz; o SNES usa ~32040 Hz) com interpolação cúbica. Com outra taxa o Android perde o caminho de baixa latência. O buffer de áudio começa pequeno (latência "Baixa" passou a ser o padrão) e **aumenta sozinho se o som falhar**. A thread do emulador ganhou prioridade de áudio. Compilação nativa com `-O2`.
+- "Mostrar fps" virou **"Mostrar fps e diagnóstico"**: fps, atraso do áudio (ms), falhas de áudio e o quadro de emulação mais lento do último segundo. Serve para separar o que é do app do que é do controle Bluetooth ou do projetor.
+- Testado no computador: o conversor de áudio (razão de taxa exata e erro de 0,02% contra uma senoide) e o motor C++ rodando 600 quadros com um núcleo falso. **Não testado:** o Kotlin não foi compilado e nada disso rodou no projetor.
+
 ## v19
 - App Jogos HY300 0.3.0: suporte a **NES**, além do Super Nintendo. O app escolhe o sistema pela extensão (ou pelo conteúdo do `.zip`) e o núcleo certo (`fceumm` para NES). Primeiro jogo de NES: Super Mario Bros. 3.
 - Sem o núcleo do sistema, o app avisa "Falta o núcleo de ...". O Snes9x EX+ continua servindo só ao Super Nintendo.

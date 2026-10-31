@@ -30,10 +30,17 @@ class HomeActivity : Activity() {
     private lateinit var descView: TextView
     private lateinit var track: LinearLayout
     private var firstCard: View? = null
+    private lateinit var sfx: Sfx
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sfx = Sfx(this)
         setContentView(buildUi())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sfx.release()
     }
 
     override fun onResume() {
@@ -186,6 +193,7 @@ class HomeActivity : Activity() {
     }
 
     private fun focusFx(v: View, stroke: GradientDrawable, has: Boolean, scale: Float, strokeDp: Int) {
+        if (has) sfx.tick()
         val s = if (has) scale else 1f
         v.animate().scaleX(s).scaleY(s).setDuration(120).start()
         stroke.setStroke(if (has) dp(strokeDp) else 0, Color.rgb(227, 238, 255))
@@ -223,7 +231,10 @@ class HomeActivity : Activity() {
         addFixed("Gerenciar atalhos", "Adicione ou remova os atalhos da tela inicial.", "#4A5568", R.drawable.ic_sliders, 20) {
             startActivity(Intent(this, ManageActivity::class.java))
         }
+        // O foco inicial é colocado por código: sem tique
+        sfx.muted = true
         firstCard?.requestFocus()
+        sfx.muted = false
     }
 
     private fun addApp(a: AppEntry) {

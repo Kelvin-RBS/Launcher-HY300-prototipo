@@ -37,7 +37,7 @@ Ele é pesado para o hardware, envia dados para servidores de rastreamento (Baid
 | **Topo** | Rede, Bluetooth e Configurações (engrenagem), todos navegáveis, e o relógio |
 | **Configurações** | Rede, Bluetooth, Idioma, **Aplicativos** (todos os apps; OK abre, segurar OK por 2 s desinstala), Projeção (zoom, método, keystone, brilho e cor), Áudio (volume e bip do cursor), Data e hora e, por último, Sobre o dispositivo |
 | **Jogos** | App separado com lista só com o nome dos jogos, pedido de controle Bluetooth e menu de pausa em português |
-| **Som** | Tique ao mover o cursor, desligável em Áudio |
+| **Som** | Tique ao mover o cursor (no launcher Android desde a v20, a confirmar no aparelho; no protótipo é desligável em Áudio) |
 | **Fundo** | Lago ao pôr do sol (gerado por IA) |
 
 Parte das Configurações, como Projeção, só funciona no aparelho abrindo a tela original do sistema, porque um app comum não tem permissão para alterar esses ajustes. Detalhes em [`docs/07-configuracoes.md`](docs/07-configuracoes.md).
@@ -73,11 +73,14 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 - Rastreamento no original: analytics da Baidu e API de loja da fabricante. O launcher novo não inclui nada disso.
 
 ## Próximos passos
-1. Medir o desempenho dos jogos no projetor e afinar o som e a latência ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
-2. Telas próprias de Configurações no launcher, abrindo as originais quando o ajuste exigir permissão de sistema ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
-3. Atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
-4. Testar o NES (precisa do núcleo `fceumm`) e acrescentar outros sistemas.
-5. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
+1. **Testar no projetor a v20:** tique do cursor, jogos novos entrando sozinhos na lista e o áudio com menos atraso (ligue "Mostrar fps e diagnóstico" nos Ajustes do emulador).
+2. Medir o desempenho e o atraso dos jogos e afinar o som ([`docs/16-motor-proprio.md`](docs/16-motor-proprio.md)).
+3. Testar o NES (precisa do núcleo `fceumm`) e acrescentar outros sistemas.
+4. **Controle remoto pelo celular:** o launcher abre um servidor na rede Wi-Fi local e o celular controla o projetor (direcional, OK, Voltar, Home) por uma página web, com PIN mostrado na tela. Começar pelo launcher e pelos jogos; fora deles depende de um serviço de acessibilidade.
+5. **TV ao vivo integrada:** o módulo `tv` (TV AO VIVO) já existe no repositório; estudar com o REA o app UniTV do projetor para reaproveitá-lo ou replicar a TV ao vivo no launcher, sem burlar login nem DRM.
+6. Telas próprias de Configurações no launcher, abrindo as originais quando o ajuste exigir permissão de sistema ([`docs/07-configuracoes.md`](docs/07-configuracoes.md)).
+7. Atualização do launcher pelo GitHub ([`docs/12`](docs/12-atualizacao-do-launcher-pelo-github.md)).
+8. Futuro: firmware próprio ([`docs/06-roadmap.md`](docs/06-roadmap.md)).
 
 ## Avisos
 - Este repositório **não** inclui APKs, dumps do aparelho, jogos (ROMs) nem o núcleo do emulador (`.so`). Veja `.gitignore`.

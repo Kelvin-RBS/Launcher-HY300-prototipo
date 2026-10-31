@@ -41,11 +41,11 @@ class EmulatorSettingsActivity : Activity() {
             { EmuPrefs.layout(this) }, { EmuPrefs.setLayout(this, it) }), rowLp())
         col.addView(Ui.optionRow(this, "Latência do áudio", listOf("Baixa", "Média", "Alta"),
             { EmuPrefs.latency(this) }, { EmuPrefs.setLatency(this, it) }), rowLp())
-        col.addView(Ui.optionRow(this, "Mostrar quadros por segundo", listOf("Não", "Sim"),
+        col.addView(Ui.optionRow(this, "Mostrar fps e diagnóstico", listOf("Não", "Sim"),
             { EmuPrefs.showFps(this) }, { EmuPrefs.setShowFps(this, it) }), rowLp())
 
         col.addView(TextView(this).apply {
-            text = "Dica: se o som falhar ou travar, aumente a latência do áudio. Se os botões A e B parecerem trocados, mude \"Botões do controle\"."
+            text = "Dica: a latência do áudio começa baixa e aumenta sozinha se o som falhar. O diagnóstico mostra fps, atraso do áudio, falhas e o quadro mais lento. Se os botões A e B parecerem trocados, mude \"Botões do controle\"."
             textSize = 13f
             setTextColor(Color.parseColor("#A9B8D2"))
             setPadding(0, dp(12), 0, 0)

@@ -38,13 +38,21 @@ Proporção da tela (4:3, 8:7 ou tela cheia), botões do controle (por posição
 
 Sem o núcleo (ou se a parte nativa não compilar), o app continua usando o **Snes9x EX+** instalado, como antes. Para compilar sem a parte nativa, ponha `hy300.native=false` em `android/gradle.properties`.
 
+## Áudio e atraso (v20)
+- O núcleo do SNES gera áudio a ~32040 Hz. O Android só usa o caminho de baixa latência quando o `AudioTrack` está na **taxa nativa** do aparelho (normalmente 48000 Hz). Por isso o motor converte o áudio (`cpp/resample.h`, interpolação cúbica) antes de entregá-lo.
+- O buffer começa em 2 quadros de vídeo (latência "Baixa", agora o padrão) e **cresce 1 quadro por segundo em que houver falha de áudio**, até 8 quadros. A emulação é cadenciada pelo próprio áudio (a escrita bloqueia quando o buffer enche).
+- A thread do emulador usa prioridade de áudio.
+- **Diagnóstico:** em Ajustes do emulador, "Mostrar fps e diagnóstico" exibe `fps · áudio (ms) · falhas · emulação máx (ms)`. Leitura: fps abaixo de 60 ou "emulação máx" perto de 16 ms = o processador não dá conta; "falhas" subindo = som picotando; tudo bom e ainda assim com atraso = a causa está fora do app (controle Bluetooth ou processamento de imagem do projetor).
+
 ## O que foi testado
 - **No projetor (testado pelo autor):** o motor próprio abre o jogo com o núcleo `snes9x2010`, o menu de pausa (Select + Start), a pergunta "Fechar o jogo?" (segurar Start por 3 s), os ajustes e o reconhecimento de um controle Xbox Bluetooth funcionam.
 - A lógica do C++ foi testada **no computador** com um núcleo libretro falso: carregar o núcleo, entrada, áudio, estado e save passaram.
-- O código Kotlin **não foi compilado** e nada rodou no projetor ainda.
+- O conversor de áudio foi testado no computador (razão exata de taxa; erro de 0,02% contra uma senoide) e o motor C++ rodou 600 quadros com um núcleo falso.
+- O código Kotlin **não foi compilado** e as mudanças da v20 não rodaram no projetor ainda.
 
 ## A confirmar no aparelho
-- Se o núcleo `snes9x2010` roda a 60 quadros por segundo no cortex-a7 (use "Mostrar quadros por segundo").
-- Se o som fica estável com a latência "Média" ou se precisa de "Alta".
+- Se o núcleo `snes9x2010` roda a 60 quadros por segundo no cortex-a7 (use "Mostrar fps e diagnóstico").
+- Se o som fica estável com a latência "Baixa" (padrão da v20, com aumento automático) e quanto o atraso melhorou.
+- Se o aparelho reporta mesmo 48000 Hz como taxa nativa.
 - Se o controle Bluetooth escolhido chega ao app com os botões certos.
 - Se o botão Guide/Home chega ao app ou vai direto para a tela inicial do sistema (nesse caso, use Select + Start).

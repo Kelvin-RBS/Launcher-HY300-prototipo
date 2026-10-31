@@ -58,6 +58,33 @@ object Catalog {
         return result.sortedBy { it.title.lowercase() }
     }
 
+    private val CANDIDATE_EXT = SNES_EXT + listOf("nes", "zip")
+
+    /**
+     * Assinatura barata das pastas de jogos (nome, tamanho e data de cada arquivo candidato).
+     * Serve para saber se chegou, saiu ou ainda está sendo copiado algum arquivo, sem abrir os .zip.
+     */
+    fun signature(ctx: Context): String {
+        val sb = StringBuilder()
+        val dirs = ArrayList<File>()
+        if (canReadPublic()) {
+            dirs.add(File(PUBLIC_DIR))
+            dirs.add(File(PUBLIC_DIR, "snes"))
+            dirs.add(File(PUBLIC_DIR, "nes"))
+        }
+        dirs.add(File(appRoot(ctx), "snes"))
+        dirs.add(File(appRoot(ctx), "nes"))
+        for (d in dirs) {
+            val files = d.listFiles() ?: continue
+            for (f in files.sortedBy { it.name }) {
+                if (f.isFile && CANDIDATE_EXT.contains(f.extension.lowercase())) {
+                    sb.append(f.path).append('|').append(f.length()).append('|').append(f.lastModified()).append(';')
+                }
+            }
+        }
+        return sb.toString()
+    }
+
     /** Sistema do arquivo: pela extensão ou, no caso de .zip, pela ROM de dentro. */
     private fun systemOf(f: File): String? {
         val ext = f.extension.lowercase()

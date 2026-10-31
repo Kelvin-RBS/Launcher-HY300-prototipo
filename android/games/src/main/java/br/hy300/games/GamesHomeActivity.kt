@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +27,26 @@ class GamesHomeActivity : Activity() {
     private lateinit var gear: View
     private var firstRow: View? = null
 
+    // Detecção automática de jogos novos: confere a pasta a cada 2 s enquanto a lista está na tela
+    private val poll = Handler(Looper.getMainLooper())
+    private var shownSignature = ""
+    private var pendingSignature = ""
+    private var shownKeys: Set<String> = emptySet()
+
+    private val checkFolders = object : Runnable {
+        override fun run() {
+            val now = Catalog.signature(this@GamesHomeActivity)
+            if (now != shownSignature) {
+                // Só atualiza quando a pasta ficou igual em duas conferências seguidas:
+                // assim não lista um arquivo que ainda está sendo copiado.
+                if (now == pendingSignature) refreshList() else pendingSignature = now
+            } else {
+                pendingSignature = ""
+            }
+            poll.postDelayed(this, 2000)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(buildUi())
@@ -34,6 +56,37 @@ class GamesHomeActivity : Activity() {
         super.onResume()
         hideSystemBars()
         rebuildList()
+        poll.removeCallbacks(checkFolders)
+        poll.postDelayed(checkFolders, 2000)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        poll.removeCallbacks(checkFolders)
+    }
+
+    /** Atualiza a lista com jogos que chegaram ou saíram, sem tirar o cursor do lugar. */
+    private fun refreshList() {
+        val focusedKey = (currentFocus?.tag as? String)
+        val gearHadFocus = currentFocus === gear
+        val before = shownKeys
+        rebuildList()
+        if (before.isNotEmpty()) {
+            if (focusedKey != null) {
+                for (i in 0 until list.childCount) {
+                    val row = list.getChildAt(i)
+                    if (row.tag == focusedKey) { row.requestFocus(); break }
+                }
+            } else if (gearHadFocus) {
+                gear.requestFocus()
+            }
+        }
+        val added = shownKeys.filter { it !in before }
+        if (before.isNotEmpty() && added.isNotEmpty()) {
+            val names = added.take(3).joinToString(", ") { it.substringAfterLast('|') }
+            val more = if (added.size > 3) " e mais " + (added.size - 3) else ""
+            Toast.makeText(this, "Novo jogo: " + names + more, Toast.LENGTH_LONG).show()
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -160,10 +213,13 @@ class GamesHomeActivity : Activity() {
     private fun rebuildList() {
         list.removeAllViews()
         firstRow = null
+        shownSignature = Catalog.signature(this)
+        pendingSignature = ""
         val games = Catalog.games(this)
+        shownKeys = games.map { it.source + ":" + it.rel + "|" + it.title }.toSet()
         if (games.isEmpty()) {
             list.addView(TextView(this).apply {
-                text = "Nenhum jogo encontrado.\n\nColoque os arquivos .sfc em:\n" + Catalog.PUBLIC_DIR +
+                text = "Nenhum jogo encontrado.\n\nColoque os arquivos .sfc ou .nes em:\n" + Catalog.PUBLIC_DIR +
                     (if (Catalog.canReadPublic()) "" else "\n\nFalta liberar o acesso a arquivos. Veja em Configurações.")
                 textSize = 14f
                 setTextColor(Color.parseColor("#D5DFF2"))
@@ -192,6 +248,7 @@ class GamesHomeActivity : Activity() {
             background = bg
             isFocusable = true
             isClickable = true
+            tag = g.source + ":" + g.rel + "|" + g.title
             setOnClickListener { play(g) }
         }
         row.setOnFocusChangeListener { _, has ->
