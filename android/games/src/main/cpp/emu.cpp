@@ -79,6 +79,7 @@ static double now_ms() {
 }
 static double g_lockSum = 0, g_lockMax = 0, g_cbSum = 0, g_cbMax = 0;
 static long g_vidN = 0;
+static double g_frameLock = 0, g_lastFrameLock = 0;  // espera por buffer de vídeo dentro do quadro atual / do último quadro
 static long g_dropped = 0;       // quadros descartados pela "fila de vídeo curta"
 static volatile int g_trim = 0;  // 1 = descarta um quadro quando a fila de vídeo enche
 static int g_skip = 0;
@@ -145,6 +146,7 @@ static void video_cb(const void *data, unsigned width, unsigned height, size_t p
     int lockRes = ANativeWindow_lock(g_window, &buf, nullptr);
     // Tempo esperando um buffer livre: alto = a fila de vídeo está cheia (atraso extra de imagem)
     double lockMs = now_ms() - tLock;
+    g_frameLock += lockMs;
     if (g_trim && lockMs > 5.0 && g_sinceDrop >= 30) g_skip = 1;
     if (lockRes != 0) return;
     unsigned rows = height < (unsigned)buf.height ? height : (unsigned)buf.height;
@@ -295,6 +297,11 @@ JNIEXPORT jdoubleArray JNICALL Java_br_hy300_games_NativeEmu_videoStats(JNIEnv *
     return arr;
 }
 
+// Quanto do último quadro foi espera por buffer de vídeo (bloqueio, não processamento).
+JNIEXPORT jdouble JNICALL Java_br_hy300_games_NativeEmu_lastFrameLockMs(JNIEnv *, jobject) {
+    return g_lastFrameLock;
+}
+
 JNIEXPORT void JNICALL Java_br_hy300_games_NativeEmu_setVideoTrim(JNIEnv *, jobject, jint on) {
     g_trim = on ? 1 : 0;
     g_skip = 0;
@@ -332,7 +339,9 @@ JNIEXPORT void JNICALL Java_br_hy300_games_NativeEmu_setSurface(JNIEnv *env, job
 JNIEXPORT jint JNICALL Java_br_hy300_games_NativeEmu_runFrame(JNIEnv *env, jobject, jshortArray out) {
     if (!g_core) return 0;
     g_audio_len = 0;
+    g_frameLock = 0;
     p_run();
+    g_lastFrameLock = g_frameLock;
     jsize cap = env->GetArrayLength(out);
     // Converte para a taxa do aparelho (sem efeito se for a mesma taxa do núcleo)
     jsize n = (jsize)g_resampler.process(g_audio, g_audio_len / 2, g_audio_out, AUDIO_OUT_MAX);

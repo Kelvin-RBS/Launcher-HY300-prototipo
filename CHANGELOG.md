@@ -1,5 +1,14 @@
 # Changelog
 
+## v24
+- **Primeiro relatório real de atraso** (Super Mario Bros. 3, NES, 104 s de jogo, controle e caixa de som ambos por Bluetooth): o NES da v23 **abre e roda**. O relatório mostrou que o som saía por uma caixa Bluetooth (A2DP) com **274 ms de atraso real** (máx 370), 95 falhas de áudio, e que o controle enviava um relatório a cada **58 ms** (o normal é ~8 ms). Hipótese: o som e o controle dividem o mesmo rádio Bluetooth; a confirmar medindo com o som fora do Bluetooth.
+- Diagnóstico corrigido (Jogos 0.4.2), dois erros meus que distorciam as conclusões:
+  - O "tempo por quadro" incluía a espera por buffer de vídeo (bloqueio, não processamento) e acusava "processador no limite" sem estar. Agora mede só o processamento do núcleo (o motor informa a espera de vídeo de cada quadro).
+  - O tempo de entrada incluía a espera normal pelo próximo quadro (~8 ms em média) e era sempre marcado como alto. Agora separa "chegada ao app" de "espera pelo quadro".
+- Novas conclusões: som e controle por Bluetooth ao mesmo tempo; esperas longas de vídeo (picos do sistema de tela); a mensagem de caminho rápido de áudio não aparece mais quando a saída é Bluetooth (a causa é o Bluetooth).
+- Novo botão **"Zerar medições"** na janela do diagnóstico, para comparar antes e depois de mudar algo sem reabrir o jogo. A saída de áudio é relida a cada segundo.
+- Testado: simulação do caso real (as conclusões saem como esperado) e o Kotlin compila. **Não testado:** no projetor.
+
 ## v23
 - App Jogos 0.4.1: **NES (Super Mario Bros. 3) corrigido, a confirmar no aparelho.** O motivo apareceu na janela da v21: o fceumm respondeu `Error opening "Super Mario Bros. 3.nes"`. A ROM estava correta (cabeçalho iNES, mapper 4, 393232 bytes). O fceumm abre o jogo **pelo caminho do arquivo**, e o app só passava o nome. Agora o motor pergunta ao núcleo se ele precisa do caminho (`need_fullpath`); se precisar, o app grava a ROM em `cache/rom/` (serve também para ROM dentro de .zip) e passa o caminho completo. O SNES não muda.
 - Launcher 0.4.5 e Jogos 0.4.1: **o mesmo tique em todas as telas** (Home, Gerenciar atalhos, Aplicativos, lista de Jogos, Ajustes, menu de pausa do jogo), pela nova base `NavActivity`.

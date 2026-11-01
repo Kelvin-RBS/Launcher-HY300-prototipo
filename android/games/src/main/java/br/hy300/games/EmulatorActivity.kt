@@ -343,6 +343,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
             .setTitle("Diagnóstico de atraso")
             .setView(scroll)
             .setPositiveButton("Fechar", null)
+            .setNeutralButton("Zerar medições") { _, _ -> probe.reset() }
             .show()
         scroll.requestFocus()
     }
@@ -564,7 +565,8 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
                 NativeEmu.setInput(0, mask)
                 NativeEmu.runFrame(buf)
             }
-            val emuMs = (System.nanoTime() - t0) / 1_000_000.0
+            // Só o processamento do núcleo: tira a espera por buffer de vídeo (que é bloqueio)
+            val emuMs = Math.max(0.0, (System.nanoTime() - t0) / 1_000_000.0 - NativeEmu.lastFrameLockMs())
             if (emuMs > worstMs) worstMs = emuMs
             probe.addEmu(emuMs)
             if (n > 0) {
@@ -601,7 +603,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
                 }
                 val vs = NativeEmu.videoStats()
                 probe.addVideo(vs[0], vs[1], vs[5].toLong(), vs[4].toLong())
-                if (probe.outputType < 0) {
+                run {
                     try {
                         val d = audio.getRoutedDevice()
                         if (d != null) {
@@ -617,7 +619,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
                 val show = EmuPrefs.showFps(this) == 1
                 ui.post {
                     fpsView.text = fps.toString() + " fps  \u00B7  áudio " + bufMs + " ms  \u00B7  falhas " + under +
-                        "  \u00B7  emulação máx " + String.format("%.1f", worst) + " ms\n" + probe.overlayLine()
+                        "  \u00B7  núcleo máx " + String.format("%.1f", worst) + " ms\n" + probe.overlayLine()
                     fpsView.visibility = if (show) View.VISIBLE else View.GONE
                 }
             }
@@ -686,7 +688,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         val bit = bitFor(code)
         if (bit >= 0) {
             if (event.action == KeyEvent.ACTION_DOWN) {
-                if (event.repeatCount == 0) probe.notePress(event.eventTime, false)
+                if (event.repeatCount == 0) probe.notePress(event.eventTime, android.os.SystemClock.uptimeMillis(), false)
                 keyMask = keyMask or (1 shl bit)
             } else if (event.action == KeyEvent.ACTION_UP) {
                 keyMask = keyMask and (1 shl bit).inv()
@@ -714,7 +716,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
             if (hy > 0.5f || ly > 0.5f) m = m or (1 shl 5)
             if (event.getAxisValue(MotionEvent.AXIS_LTRIGGER) > 0.5f || event.getAxisValue(MotionEvent.AXIS_BRAKE) > 0.5f) m = m or (1 shl 10)
             if (event.getAxisValue(MotionEvent.AXIS_RTRIGGER) > 0.5f || event.getAxisValue(MotionEvent.AXIS_GAS) > 0.5f) m = m or (1 shl 11)
-            if ((m and axisMask.inv()) != 0) probe.notePress(event.eventTime, true)
+            if ((m and axisMask.inv()) != 0) probe.notePress(event.eventTime, android.os.SystemClock.uptimeMillis(), true)
             axisMask = m
             padMask = keyMask or axisMask
             return true

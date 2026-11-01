@@ -54,9 +54,9 @@ Como usar: jogue uns 30 segundos apertando botões e mexendo no direcional e no 
 
 | Medida | O que indica |
 |---|---|
-| Botões / direcional (ms até o jogo) | O normal para botões é de 1 a 4 ms. O direcional chega como evento de movimento, que o Android agrupa por quadro de tela (até ~16 ms a mais); isso o app não consegue evitar no Android 11 |
+| Botões / direcional: "chegada ao app" + "espera pelo quadro" | A espera pelo quadro é normal (~8 ms em média). A chegada ao app, para botões, é normalmente de 1 a 4 ms. O direcional chega como evento de movimento, que o Android agrupa por quadro de tela (até ~16 ms a mais); isso o app não consegue evitar no Android 11 |
 | Intervalo entre envios do controle | Perto de 8 ms é bom. 15 ms ou mais: o controle ou o Bluetooth enviam pouco |
-| Tempo por quadro de emulação | Acima de ~12 ms de média o processador está no limite (o orçamento é 16,6 ms) |
+| Processamento do núcleo por quadro | Não inclui a espera de vídeo. Acima de ~12 ms de média o processador está no limite (o orçamento é 16,6 ms) |
 | Espera por buffer de vídeo | Acima de ~4 ms: a fila de vídeo está cheia e a imagem fica 1 a 2 quadros atrasada |
 | Atraso real do som | Soma buffer do app, caminho do sistema e saída. Bluetooth costuma passar de 100 ms |
 | Caminho rápido: não | O Android não liberou a baixa latência de áudio |

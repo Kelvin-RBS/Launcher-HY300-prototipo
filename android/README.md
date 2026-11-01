@@ -1,6 +1,6 @@
 # Projeto Android — Launcher HY300
 
-**Launcher 0.4.5 e Jogos 0.4.1.** Dois apps: `app` (launcher) e `games` (Jogos HY300). Foi escrita sem compilador à disposição, então **pode haver erros de compilação**. Se aparecerem, copie a mensagem completa da aba *Build* do Android Studio e envie.
+**Launcher 0.4.5 e Jogos 0.4.2.** Dois apps: `app` (launcher) e `games` (Jogos HY300). Foi escrita sem compilador à disposição, então **pode haver erros de compilação**. Se aparecerem, copie a mensagem completa da aba *Build* do Android Studio e envie.
 
 ## O que já faz
 - Tela inicial com o fundo, o topo (Rede, Bluetooth, engrenagem e hora), o título e a descrição do item em foco e a fileira de atalhos.
