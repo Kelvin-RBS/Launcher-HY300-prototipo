@@ -38,7 +38,7 @@ object Games {
 }
 
 /** Lista os jogos das pastas e abre o escolhido no RetroArch. */
-class GamesActivity : Activity() {
+class GamesActivity : NavActivity() {
 
     private var games: List<Game> = emptyList()
     private lateinit var adapter: BaseAdapter

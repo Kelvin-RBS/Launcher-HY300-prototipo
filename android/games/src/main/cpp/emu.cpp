@@ -41,6 +41,8 @@ static void (*p_set_audio_sample_batch)(retro_audio_sample_batch_t);
 static void (*p_set_input_poll)(retro_input_poll_t);
 static void (*p_set_input_state)(retro_input_state_t);
 static void (*p_init)(void);
+static void (*p_get_system_info)(retro_system_info *);
+static bool g_needFullPath = false;  // o núcleo abre o jogo pelo caminho do arquivo (ex.: fceumm)
 static void (*p_deinit)(void);
 static void (*p_get_system_av_info)(retro_system_av_info *);
 static bool (*p_load_game)(const retro_game_info *);
@@ -237,6 +239,16 @@ JNIEXPORT jboolean JNICALL Java_br_hy300_games_NativeEmu_loadCore(JNIEnv *env, j
 #undef SYM
     if (!ok) { dlclose(g_core); g_core = nullptr; return JNI_FALSE; }
 
+    // Opcional: pergunta ao núcleo se ele precisa do caminho completo do arquivo
+    g_needFullPath = false;
+    *(void **)(&p_get_system_info) = dlsym(g_core, "retro_get_system_info");
+    if (p_get_system_info) {
+        retro_system_info si;
+        memset(&si, 0, sizeof(si));
+        p_get_system_info(&si);
+        g_needFullPath = si.need_fullpath;
+    }
+
     p_set_environment(env_cb);
     p_init();
     p_set_video_refresh(video_cb);
@@ -288,6 +300,10 @@ JNIEXPORT void JNICALL Java_br_hy300_games_NativeEmu_setVideoTrim(JNIEnv *, jobj
     g_skip = 0;
     g_dropped = 0;
     g_sinceDrop = 1000;
+}
+
+JNIEXPORT jboolean JNICALL Java_br_hy300_games_NativeEmu_needFullPath(JNIEnv *, jobject) {
+    return g_needFullPath ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jstring JNICALL Java_br_hy300_games_NativeEmu_lastLog(JNIEnv *env, jobject) {

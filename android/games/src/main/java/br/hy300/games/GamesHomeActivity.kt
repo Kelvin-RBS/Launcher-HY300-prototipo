@@ -19,7 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 /** Tela inicial do app de jogos: visual do launcher, engrenagem no topo e a lista com o nome dos jogos. */
-class GamesHomeActivity : Activity() {
+class GamesHomeActivity : NavActivity() {
 
     private lateinit var titleView: TextView
     private lateinit var descView: TextView
@@ -67,6 +67,7 @@ class GamesHomeActivity : Activity() {
 
     /** Atualiza a lista com jogos que chegaram ou saíram, sem tirar o cursor do lugar. */
     private fun refreshList() {
+        quiet()
         val focusedKey = (currentFocus?.tag as? String)
         val gearHadFocus = currentFocus === gear
         val before = shownKeys

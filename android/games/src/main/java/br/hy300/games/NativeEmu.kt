@@ -20,6 +20,8 @@ object NativeEmu {
     external fun lastError(): String
     /** Últimas mensagens de erro/aviso do núcleo (explicam, por exemplo, por que ele recusou um jogo). */
     external fun lastLog(): String
+    /** true = o núcleo abre o jogo pelo caminho do arquivo (o app precisa gravar a ROM num arquivo e passar o caminho completo). */
+    external fun needFullPath(): Boolean
     /** [espera média por buffer de vídeo (ms), máxima, tempo médio do quadro de vídeo, máximo, quadros, descartados]; zera a contagem. */
     external fun videoStats(): DoubleArray
     /** 1 = descarta um quadro quando a fila de vídeo enche (menos atraso de imagem; experimental). */

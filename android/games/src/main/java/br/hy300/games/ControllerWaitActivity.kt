@@ -18,7 +18,7 @@ import android.widget.Toast
 import java.io.File
 
 /** Pede para conectar um controle e abre o jogo sozinho assim que ele conectar. OK volta à lista. */
-class ControllerWaitActivity : Activity() {
+class ControllerWaitActivity : NavActivity() {
 
     private lateinit var game: Game
     private lateinit var inputManager: InputManager

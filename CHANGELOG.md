@@ -1,5 +1,11 @@
 # Changelog
 
+## v23
+- App Jogos 0.4.1: **NES (Super Mario Bros. 3) corrigido, a confirmar no aparelho.** O motivo apareceu na janela da v21: o fceumm respondeu `Error opening "Super Mario Bros. 3.nes"`. A ROM estava correta (cabeçalho iNES, mapper 4, 393232 bytes). O fceumm abre o jogo **pelo caminho do arquivo**, e o app só passava o nome. Agora o motor pergunta ao núcleo se ele precisa do caminho (`need_fullpath`); se precisar, o app grava a ROM em `cache/rom/` (serve também para ROM dentro de .zip) e passa o caminho completo. O SNES não muda.
+- Launcher 0.4.5 e Jogos 0.4.1: **o mesmo tique em todas as telas** (Home, Gerenciar atalhos, Aplicativos, lista de Jogos, Ajustes, menu de pausa do jogo), pela nova base `NavActivity`.
+- **Tique duplo corrigido de outro jeito.** O conserto da v21 (desligar o som de efeitos da janela) não funcionou: ao mover o foco com o direcional, o Android toca o som de navegação por conta própria, sem consultar a tela. Agora o app atende as teclas direcionais que nenhum componente tratou (as linhas de ajuste continuam usando esquerda/direita), então o Android não faz a navegação dele nem toca o som dele; só toca o tique do app. Nas bordas da lista não toca nada. O foco colocado pelo app (abrir a tela, atualizar a lista, abrir o menu) não toca.
+- Testado: o Kotlin dos dois módulos compila sem erros (kotlinc contra o android.jar da API 30) e o motor detecta o `need_fullpath` com um núcleo falso. **Não testado:** nada rodou no projetor.
+
 ## v22
 - App Jogos 0.4.0: **Diagnóstico de atraso.** No menu do jogo (Select+Start) há o novo item "Diagnóstico de atraso". Ele mostra um relatório com conclusões e o salva em `Jogos/diagnostico-atraso.txt` (para ler no PC: `scripts/06-ler-diagnostico.ps1`). Mede:
   - **controle até o jogo:** quanto cada aperto espera para ser lido, separando botões (teclas) e direcional/analógico (eventos de movimento, que o Android agrupa por quadro de tela), e o intervalo real entre os envios do controle;

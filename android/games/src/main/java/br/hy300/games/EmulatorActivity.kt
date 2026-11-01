@@ -29,7 +29,7 @@ import java.io.File
  * Motor próprio: roda o jogo com o núcleo do Snes9x, sem controles de toque.
  * Menu em português: segure Select + Start (ou Voltar / botão Guide) para abrir.
  */
-class EmulatorActivity : Activity(), SurfaceHolder.Callback {
+class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
 
     private companion object {
         const val SELECT_BIT = 1 shl 2
@@ -225,6 +225,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         padMask = 0
         if (coreReady) saveSram()
         menu.visibility = View.VISIBLE
+        quiet()
         menu.getChildAt(1).requestFocus()
     }
 
@@ -237,6 +238,7 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
         padMask = 0
         if (coreReady) saveSram()
         confirm.visibility = View.VISIBLE
+        quiet()
         noButton.requestFocus()
     }
 
@@ -305,6 +307,20 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
     }
 
     // ------------------------------------------------------------------ emulação
+
+    /** Grava a ROM em cache/rom/ (apaga as anteriores) e devolve o arquivo, ou null se não der. */
+    private fun writeTempRom(name: String, data: ByteArray): File? {
+        return try {
+            val dir = File(cacheDir, "rom")
+            dir.mkdirs()
+            dir.listFiles()?.forEach { it.delete() }
+            val f = File(dir, File(name).name)
+            f.writeBytes(data)
+            f
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     /** Mostra o relatório de atraso (e o salva em Jogos/diagnostico-atraso.txt para ler pelo PC). */
     private fun showDiagnostic() {
@@ -423,7 +439,14 @@ class EmulatorActivity : Activity(), SurfaceHolder.Callback {
             return
         }
         val romBytes = RomLoader.stripHeader(rom.second, game.system)
-        if (!NativeEmu.loadGame(romBytes, rom.first)) {
+        // Núcleos como o fceumm abrem o jogo pelo caminho do arquivo: grava a ROM (que pode vir de
+        // dentro de um .zip) num arquivo temporário e passa o caminho completo.
+        var romPath = rom.first
+        if (NativeEmu.needFullPath()) {
+            val tmp = writeTempRom(rom.first, romBytes)
+            if (tmp != null) romPath = tmp.absolutePath
+        }
+        if (!NativeEmu.loadGame(romBytes, romPath)) {
             val log = NativeEmu.lastLog().trim()
             val detail = RomLoader.describe(romBytes, rom.first, game.system) +
                 (if (log.isNotEmpty()) "\n\nO núcleo disse:\n" + log.takeLast(600) else "\n\nO núcleo não explicou o motivo.")

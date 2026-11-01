@@ -23,7 +23,7 @@ import android.widget.Toast
  * Todos os apps (Configurações > Aplicativos). OK abre o app; segurar OK por 2 segundos pede para
  * desinstalar (o Android mostra "Desinstalar" e "Cancelar").
  */
-class AppsActivity : Activity() {
+class AppsActivity : NavActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
     private var apps: List<AppEntry> = emptyList()

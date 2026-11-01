@@ -21,7 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 /** Tela inicial: topo (rede, bluetooth, configurações, hora), título do item em foco e fileira de atalhos. */
-class HomeActivity : Activity() {
+class HomeActivity : NavActivity() {
 
     private val settingsPkg = "com.htc.htcsettings"
     private val settingsPrefix = "com.htc.activity."
@@ -30,21 +30,12 @@ class HomeActivity : Activity() {
     private lateinit var descView: TextView
     private lateinit var track: LinearLayout
     private var firstCard: View? = null
-    private lateinit var sfx: Sfx
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sfx = Sfx(this)
         setContentView(buildUi())
-        // O Android toca o próprio som de navegação nos botões do topo; desligado aqui para
-        // só tocar o tique do launcher (um som, igual em toda a tela).
-        window.decorView.isSoundEffectsEnabled = false
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        sfx.release()
-    }
 
     override fun onResume() {
         super.onResume()
@@ -196,7 +187,6 @@ class HomeActivity : Activity() {
     }
 
     private fun focusFx(v: View, stroke: GradientDrawable, has: Boolean, scale: Float, strokeDp: Int) {
-        if (has) sfx.tick()
         val s = if (has) scale else 1f
         v.animate().scaleX(s).scaleY(s).setDuration(120).start()
         stroke.setStroke(if (has) dp(strokeDp) else 0, Color.rgb(227, 238, 255))
@@ -235,9 +225,8 @@ class HomeActivity : Activity() {
             startActivity(Intent(this, ManageActivity::class.java))
         }
         // O foco inicial é colocado por código: sem tique
-        sfx.muted = true
+        quiet()
         firstCard?.requestFocus()
-        sfx.muted = false
     }
 
     private fun addApp(a: AppEntry) {

@@ -44,6 +44,9 @@ Sem o núcleo (ou se a parte nativa não compilar), o app continua usando o **Sn
 - A thread do emulador usa prioridade de áudio.
 - **Diagnóstico:** em Ajustes do emulador, "Mostrar fps e diagnóstico" exibe `fps · áudio (ms) · falhas · emulação máx (ms)`. Leitura: fps abaixo de 60 ou "emulação máx" perto de 16 ms = o processador não dá conta; "falhas" subindo = som picotando; tudo bom e ainda assim com atraso = a causa está fora do app (controle Bluetooth ou processamento de imagem do projetor).
 
+## NES e o caminho do arquivo (v23)
+Alguns núcleos (o fceumm do NES) abrem o jogo pelo **caminho do arquivo**, não pelos bytes. O motor lê `need_fullpath` do núcleo; quando é verdadeiro, o app grava a ROM em `cache/rom/` e passa o caminho completo (o SNES, que usa os bytes, não é afetado). Se um núcleo recusar um jogo, a janela de erro mostra o que o núcleo disse e dados do arquivo.
+
 ## Diagnóstico de atraso (v22)
 No menu do jogo (Select+Start): **Diagnóstico de atraso**. O relatório também é salvo em `/storage/emulated/0/Jogos/diagnostico-atraso.txt`; no PC, `scripts/06-ler-diagnostico.ps1` copia e mostra o arquivo.
 

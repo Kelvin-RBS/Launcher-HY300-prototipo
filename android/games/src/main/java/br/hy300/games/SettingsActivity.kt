@@ -16,7 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 /** Configurações do app de jogos: controles, pasta dos jogos, motor e acesso aos ajustes do emulador. */
-class SettingsActivity : Activity() {
+class SettingsActivity : NavActivity() {
 
     private lateinit var controllersText: TextView
     private lateinit var filesText: TextView

@@ -15,7 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 /** Escolha dos até 5 atalhos de apps da tela inicial. OK adiciona ou remove; Voltar conclui. */
-class ManageActivity : Activity() {
+class ManageActivity : NavActivity() {
 
     private val pinned = ArrayList<String>()
     private lateinit var apps: List<AppEntry>

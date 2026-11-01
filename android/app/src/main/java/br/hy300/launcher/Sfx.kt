@@ -22,9 +22,6 @@ class Sfx(ctx: Context) {
     private var soundId = 0
     @Volatile private var loaded = false
 
-    /** Enquanto for true, o tique não toca (usado quando o foco é colocado por código, não pelo usuário). */
-    @Volatile var muted = false
-
     init {
         pool.setOnLoadCompleteListener { _, id, status -> if (id == soundId && status == 0) loaded = true }
         soundId = pool.load(ctx, R.raw.nav_tick, 1)
@@ -35,7 +32,7 @@ class Sfx(ctx: Context) {
     fun tick() {
         val now = SystemClock.uptimeMillis()
         // Nunca toca duas vezes em menos de 60 ms (garantia contra tique duplicado)
-        if (!loaded || muted || now - lastTick < 60) return
+        if (!loaded || now - lastTick < 60) return
         lastTick = now
         pool.play(soundId, 0.6f, 0.6f, 1, 0, 1f)
     }

@@ -9,7 +9,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 
 /** Ajustes do emulador próprio (em português, só o essencial, sem controles de toque). */
-class EmulatorSettingsActivity : Activity() {
+class EmulatorSettingsActivity : NavActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
