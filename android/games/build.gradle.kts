@@ -19,8 +19,8 @@ android {
         applicationId = "br.hy300.games"
         minSdk = 30
         targetSdk = 30
-        versionCode = 12
-        versionName = "0.4.2"
+        versionCode = 13
+        versionName = "0.5.0"
 
         // O projetor é de 32 bits
         ndk {

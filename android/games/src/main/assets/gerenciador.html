@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jogos HY300</title>
+<style>
+  :root { color-scheme: dark; --bg:#060a14; --card:#101a2e; --line:#26385a; --txt:#eaf1ff; --dim:#a9b8d2; --acc:#2f7cf6; --bad:#ef5b5b; --ok:#3ecf8e; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:16px/1.4 system-ui, sans-serif; padding:16px; max-width:760px; margin-inline:auto; }
+  h1 { font-size:22px; margin:4px 0 14px; }
+  h2 { font-size:13px; letter-spacing:.08em; color:var(--dim); margin:22px 0 8px; font-weight:600; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  input[type=text], input[type=tel] { width:100%; font:inherit; padding:12px; border-radius:8px; border:1px solid var(--line); background:#0b1424; color:var(--txt); }
+  button { font:inherit; padding:10px 14px; border-radius:8px; border:1px solid var(--line); background:#16233b; color:var(--txt); cursor:pointer; }
+  button.main { background:var(--acc); border-color:var(--acc); font-weight:600; }
+  button.danger { color:var(--bad); }
+  button:disabled { opacity:.5; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .game { display:flex; gap:10px; align-items:center; padding:10px 0; border-top:1px solid var(--line); }
+  .game:first-child { border-top:0; }
+  .game .info { flex:1; min-width:0; }
+  .game .t { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .game .s { color:var(--dim); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .msg { margin:10px 0 0; min-height:1.4em; color:var(--dim); }
+  .msg.err { color:var(--bad); } .msg.ok { color:var(--ok); }
+  .bar { height:6px; background:#0b1424; border-radius:3px; overflow:hidden; margin-top:4px; }
+  .bar > div { height:100%; width:0; background:var(--acc); }
+  .up { padding:6px 0; font-size:14px; }
+  .hide { display:none; }
+  .note { color:var(--dim); font-size:13px; margin-top:8px; }
+</style>
+</head>
+<body>
+<h1>Jogos HY300</h1>
+
+<div id="login" class="card">
+  <p style="margin-top:0">Digite o PIN que aparece na tela do projetor.</p>
+  <div class="row">
+    <input id="pin" type="tel" inputmode="numeric" maxlength="8" placeholder="PIN" autocomplete="off" style="flex:1">
+    <button id="enter" class="main">Entrar</button>
+  </div>
+  <div id="loginmsg" class="msg"></div>
+</div>
+
+<div id="app" class="hide">
+  <h2>ENVIAR JOGOS</h2>
+  <div class="card">
+    <div class="row">
+      <input id="files" type="file" multiple accept=".sfc,.smc,.swc,.fig,.nes,.zip">
+      <button id="send" class="main">Enviar</button>
+    </div>
+    <div class="note">Aceita .sfc, .smc, .swc, .fig (Super Nintendo), .nes e .zip. Use apenas jogos que você tem o direito de usar. Cada jogo vai para a pasta certa do projetor.</div>
+    <div id="uploads"></div>
+  </div>
+
+  <h2>JOGOS NO PROJETOR</h2>
+  <div class="card"><div id="list">Carregando...</div></div>
+  <div id="msg" class="msg"></div>
+</div>
+
+<script>
+var pin = sessionStorage.getItem('pin') || '';
+
+function $(id) { return document.getElementById(id); }
+
+function call(method, url, body, onProgress) {
+  return new Promise(function (resolve) {
+    var x = new XMLHttpRequest();
+    x.open(method, url);
+    x.setRequestHeader('X-Pin', pin);
+    if (onProgress) {
+      x.upload.onprogress = function (e) { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+    }
+    x.onload = function () {
+      var j = {};
+      try { j = JSON.parse(x.responseText); } catch (e) { j = { ok: false, error: 'Resposta inesperada.' }; }
+      resolve({ status: x.status, json: j });
+    };
+    x.onerror = function () { resolve({ status: 0, json: { ok: false, error: 'Sem conexão com o projetor.' } }); };
+    x.send(body || null);
+  });
+}
+
+function say(text, kind) {
+  var m = $('msg');
+  m.textContent = text || '';
+  m.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+function human(n) {
+  if (n >= 1048576) return (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
+  return Math.max(1, Math.round(n / 1024)) + ' KB';
+}
+
+function baseName(file) {
+  var i = file.lastIndexOf('.');
+  return i > 0 ? file.substring(0, i) : file;
+}
+
+function showApp() {
+  $('login').className = 'hide';
+  $('app').className = '';
+  refresh();
+}
+
+function refresh() {
+  call('GET', '/api/list').then(function (r) {
+    if (r.status === 401 || r.status === 429) {
+      sessionStorage.removeItem('pin');
+      $('app').className = 'hide';
+      $('login').className = 'card';
+      $('loginmsg').className = 'msg err';
+      $('loginmsg').textContent = r.json.error || 'PIN incorreto.';
+      return;
+    }
+    renderList(r.json.games || []);
+  });
+}
+
+function renderList(games) {
+  var box = $('list');
+  box.textContent = '';
+  if (games.length === 0) {
+    box.textContent = 'Nenhum jogo ainda. Envie o primeiro acima.';
+    return;
+  }
+  games.forEach(function (g) {
+    var row = document.createElement('div');
+    row.className = 'game';
+    var info = document.createElement('div');
+    info.className = 'info';
+    var t = document.createElement('div');
+    t.className = 't';
+    t.textContent = g.title;
+    var s = document.createElement('div');
+    s.className = 's';
+    s.textContent = g.system + ' · ' + human(g.size) + ' · ' + g.file;
+    info.appendChild(t);
+    info.appendChild(s);
+
+    var ren = document.createElement('button');
+    ren.textContent = 'Renomear';
+    ren.onclick = function () { renameGame(g); };
+    var del = document.createElement('button');
+    del.textContent = 'Apagar';
+    del.className = 'danger';
+    del.onclick = function () { deleteGame(g); };
+
+    row.appendChild(info);
+    row.appendChild(ren);
+    row.appendChild(del);
+    box.appendChild(row);
+  });
+}
+
+function renameGame(g) {
+  var novo = prompt('Novo nome do jogo (sem a extensão):', baseName(g.file));
+  if (novo === null) return;
+  call('POST', '/api/rename?id=' + encodeURIComponent(g.id) + '&name=' + encodeURIComponent(novo)).then(function (r) {
+    if (r.json.ok) { say('Renomeado.', 'ok'); } else { say(r.json.error || 'Erro ao renomear.', 'err'); }
+    refresh();
+  });
+}
+
+function deleteGame(g) {
+  if (!confirm('Apagar "' + g.title + '" do projetor? O arquivo será removido por completo.')) return;
+  var saves = confirm('Apagar também o progresso salvo (save e estado) deste jogo?\n\nOK = apagar também   ·   Cancelar = manter o progresso');
+  call('POST', '/api/delete?id=' + encodeURIComponent(g.id) + '&saves=' + (saves ? '1' : '0')).then(function (r) {
+    if (r.json.ok) { say('Jogo apagado.', 'ok'); } else { say(r.json.error || 'Erro ao apagar.', 'err'); }
+    refresh();
+  });
+}
+
+function sendFiles() {
+  var input = $('files');
+  var files = input.files;
+  if (!files || files.length === 0) { say('Escolha um ou mais arquivos primeiro.', 'err'); return; }
+  $('send').disabled = true;
+  var list = [];
+  for (var i = 0; i < files.length; i++) list.push(files[i]);
+  var done = 0, okCount = 0;
+
+  function next() {
+    if (done >= list.length) {
+      $('send').disabled = false;
+      input.value = '';
+      say(okCount + ' de ' + list.length + ' enviado(s).', okCount === list.length ? 'ok' : 'err');
+      refresh();
+      return;
+    }
+    var f = list[done];
+    var line = document.createElement('div');
+    line.className = 'up';
+    var label = document.createElement('div');
+    label.textContent = f.name + ' (' + human(f.size) + ')';
+    var bar = document.createElement('div');
+    bar.className = 'bar';
+    var fill = document.createElement('div');
+    bar.appendChild(fill);
+    line.appendChild(label);
+    line.appendChild(bar);
+    $('uploads').appendChild(line);
+
+    call('POST', '/api/upload?name=' + encodeURIComponent(f.name), f, function (p) {
+      fill.style.width = Math.round(p * 100) + '%';
+    }).then(function (r) {
+      if (r.json.ok) {
+        okCount++;
+        fill.style.width = '100%';
+        label.textContent = f.name + ' — enviado';
+      } else {
+        fill.style.background = '#ef5b5b';
+        label.textContent = f.name + ' — ' + (r.json.error || 'erro');
+      }
+      done++;
+      next();
+    });
+  }
+  next();
+}
+
+$('enter').onclick = function () {
+  pin = $('pin').value.trim();
+  if (!pin) return;
+  sessionStorage.setItem('pin', pin);
+  call('GET', '/api/list').then(function (r) {
+    if (r.status === 200) {
+      showApp();
+    } else {
+      $('loginmsg').className = 'msg err';
+      $('loginmsg').textContent = r.json.error || 'Não foi possível entrar.';
+    }
+  });
+};
+$('pin').onkeydown = function (e) { if (e.key === 'Enter') $('enter').onclick(); };
+$('send').onclick = sendFiles;
+
+if (pin) {
+  call('GET', '/api/list').then(function (r) { if (r.status === 200) showApp(); });
+}
+</script>
+</body>
+</html>

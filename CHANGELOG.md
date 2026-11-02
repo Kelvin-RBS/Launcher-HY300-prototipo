@@ -1,5 +1,14 @@
 # Changelog
 
+## v25
+- App Jogos 0.5.0: **Gerenciar jogos** (engrenagem > Gerenciar jogos), a quarta opção do menu de Configurações.
+  - **Renomear** com teclado na tela; a extensão é mantida e o save e o estado salvo acompanham o nome.
+  - **Excluir** apaga o arquivo do jogo por completo, com confirmação (o foco começa em Cancelar) e a escolha de apagar também o progresso.
+  - **Envio pela rede:** a tela abre um servidor web (`http://IP:8080` com PIN de 4 dígitos) enquanto estiver aberta. No celular ou PC, na mesma rede, dá para enviar, renomear e apagar jogos; o que for enviado vai direto para a pasta certa (`snes` ou `nes`). Bloqueio por 30 s depois de 5 PINs errados, limite de 64 MB, só `.sfc .smc .swc .fig .nes .zip`, nomes limpos (nada grava fora da pasta). Nova permissão: `INTERNET` (necessária para abrir o servidor).
+- **Sem download de sites de ROMs.** O pedido de baixar jogos de bsnes.org e do GitHub bsnesemulator **não foi atendido**: são coleções de jogos comerciais sem licença. O projeto não se liga a nenhuma fonte de ROMs; o envio pela rede serve para colocar os arquivos que você já tem.
+- README: créditos corrigidos (Snes9x 2010, FCEUmm e libretro; o FCEUmm estava faltando).
+- Testado no computador com requisições reais (PIN, bloqueio, envios, recusas, renomear, apagar, acentos) e o Kotlin compila. **Não testado:** no projetor nem num navegador de celular. Detalhes em `docs/17-gerenciar-jogos.md`.
+
 ## v24
 - **Primeiro relatório real de atraso** (Super Mario Bros. 3, NES, 104 s de jogo, controle e caixa de som ambos por Bluetooth): o NES da v23 **abre e roda**. O relatório mostrou que o som saía por uma caixa Bluetooth (A2DP) com **274 ms de atraso real** (máx 370), 95 falhas de áudio, e que o controle enviava um relatório a cada **58 ms** (o normal é ~8 ms). Hipótese: o som e o controle dividem o mesmo rádio Bluetooth; a confirmar medindo com o som fora do Bluetooth.
 - Diagnóstico corrigido (Jogos 0.4.2), dois erros meus que distorciam as conclusões:

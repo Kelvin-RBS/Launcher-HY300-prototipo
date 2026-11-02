@@ -96,11 +96,15 @@ class SettingsActivity : NavActivity() {
         val emu = Ui.focusButton(this, "Ajustes do emulador") {
             startActivity(Intent(this, EmulatorSettingsActivity::class.java))
         }
+        val manage = Ui.focusButton(this, "Gerenciar jogos") {
+            startActivity(Intent(this, ManageGamesActivity::class.java))
+        }
         val back = Ui.focusButton(this, "Voltar") { finish() }
         buttons.addView(pair, LinearLayout.LayoutParams(dp(170), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(14) })
         buttons.addView(emu, LinearLayout.LayoutParams(dp(210), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(14) })
-        buttons.addView(back, LinearLayout.LayoutParams(dp(120), ViewGroup.LayoutParams.WRAP_CONTENT))
+        buttons.addView(manage, LinearLayout.LayoutParams(dp(190), ViewGroup.LayoutParams.WRAP_CONTENT))
         col.addView(buttons)
+        col.addView(back, LinearLayout.LayoutParams(dp(120), ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(14) })
         pair.requestFocus()
 
         return ScrollView(this).apply {

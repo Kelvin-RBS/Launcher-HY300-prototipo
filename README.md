@@ -19,6 +19,7 @@ O autor define o rumo, testa no aparelho e decide o que entra.
 O HY300 já projeta uma imagem grande em qualquer parede. Falta um sistema à altura: rápido, bonito, fácil de usar só com o controle remoto e pensado para jogar. A visão do projeto:
 
 - **Tela inicial limpa**, com atalhos de apps, relógio e acesso rápido a rede, Bluetooth e configurações.
+- **Gerenciar jogos** no app de jogos: renomear, excluir e receber jogos pelo celular ou computador na mesma rede ([`docs/17`](docs/17-gerenciar-jogos.md)).
 - **Jogos retrô de 16 bits** (começando pelo Super Nintendo) em um **app próprio de jogos**, com o visual do launcher e um **motor próprio** (núcleo Snes9x), sem controle de toque e compatível com controles Bluetooth em geral. Durante o jogo, **segurar Start por 3 segundos** pergunta se quer fechar o jogo e voltar à lista.
 - **Consoles e PC pelo HDMI**, com a entrada a um clique.
 - **Controle Bluetooth ou USB** para jogar (o controle remoto do projetor só tem direcional e OK).
@@ -58,7 +59,7 @@ Abra o [protótipo online](https://kelvin-rbs.github.io/Launcher-HY300-prototipo
 | `jogos/` | Pasta de partida para os jogos (conteúdo fora do Git) |
 | `android/` | Projeto Android (Kotlin): módulo `app` (launcher) e módulo `games` (app Jogos HY300). Guia em `android/README.md` |
 
-Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/14-app-jogos.md`](docs/14-app-jogos.md) · [`docs/15-analise-snes9x-ex.md`](docs/15-analise-snes9x-ex.md) · [`docs/16-motor-proprio.md`](docs/16-motor-proprio.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`docs/13-projeto-android.md`](docs/13-projeto-android.md) · [`CHANGELOG.md`](CHANGELOG.md)
+Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roadmap.md`](docs/06-roadmap.md) · [`docs/14-app-jogos.md`](docs/14-app-jogos.md) · [`docs/15-analise-snes9x-ex.md`](docs/15-analise-snes9x-ex.md) · [`docs/16-motor-proprio.md`](docs/16-motor-proprio.md) · [`docs/17-gerenciar-jogos.md`](docs/17-gerenciar-jogos.md) · [`docs/10-analise-htcsettings.md`](docs/10-analise-htcsettings.md) · [`docs/11-atualizacao-e-sobre.md`](docs/11-atualizacao-e-sobre.md) · [`docs/12-atualizacao-do-launcher-pelo-github.md`](docs/12-atualizacao-do-launcher-pelo-github.md) · [`docs/13-projeto-android.md`](docs/13-projeto-android.md) · [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Resumo das descobertas
 - O launcher original (`com.htc.htclauncherhighenglishd08`, v1.4.5) é só uma grade de apps. Roda como app de sistema e **não** controla keystone, foco ou imagem.
@@ -89,7 +90,10 @@ Documentos principais: [`docs/05-design.md`](docs/05-design.md) · [`docs/06-roa
 
 ## Créditos
 - Plano de fundo gerado por IA.
-- Núcleo de emulação: **Snes9x** (pela interface libretro), baixado do site do libretro e **não incluído** aqui. A licença do Snes9x é não comercial.
+- Núcleos de emulação, pela interface **libretro**, baixados do site do libretro e **não incluídos** aqui:
+  - Super Nintendo: **Snes9x 2010** (licença não comercial).
+  - NES: **FCEUmm** (licença GPL).
+- Interface de núcleos: **libretro** (https://www.libretro.com).
 - Análise e protótipo feitos com IA (Claude, da Anthropic) e REA.
 
 ## Licença
