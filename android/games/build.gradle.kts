@@ -5,27 +5,40 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+// OkHttp para downloads do GitHub
+val okhttpVersion = "4.12.0"
+
 // Lê a chave de assinatura de keystore.properties (arquivo local, fora do Git)
 val ksProps = Properties().apply {
     val f = rootProject.file("keystore.properties")
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
+// Lê githubToken do gradle.properties (opcional, para aumentar rate limit da API)
+val githubToken = project.findProperty("githubToken") as String? ?: ""
+
 android {
     namespace = "br.hy300.games"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "br.hy300.games"
         minSdk = 30
         targetSdk = 30
-        versionCode = 13
-        versionName = "0.5.0"
+        versionCode = 14
+        versionName = "0.6.0"
 
         // O projetor é de 32 bits
         ndk {
             abiFilters += listOf("armeabi-v7a")
         }
+
+        // GitHub token para API (opcional) - aumenta rate limit de 60/h para 5000/h
+        buildConfigField("String", "GITHUB_TOKEN", "\"$githubToken\"")
     }
 
     // Motor próprio (C++). Para compilar sem ele, ponha hy300.native=false em android/gradle.properties
@@ -75,4 +88,9 @@ android {
         checkReleaseBuilds = false
         abortOnError = false
     }
+}
+
+dependencies {
+    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
+    implementation("com.squareup.okio:okio:3.5.0")
 }

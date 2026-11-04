@@ -1,5 +1,18 @@
 # Changelog
 
+## v26
+- App Jogos (correção): **busca de catálogo no GitHub** (bsnesemulator/SNES-ROMS) voltava vazia. O filtro comparava o sistema com extensões de arquivo e descartava todos os jogos; a listagem usava a API "contents" (limite de 1000 itens, sem paginação); a checagem de atualização comparava ETag com SHA. Agora lista o repo inteiro via `git/trees?recursive=1`, usa cache (e cai no cache se a API limitar), monta a URL de download com codificação correta e a tela usa lista leve com busca pelo teclado na tela.
+- App Jogos 0.6.0: **Download de jogos do GitHub** substituindo o envio pela rede.
+  - A tela "Gerenciar jogos" agora tem o botão "Buscar catálogo no GitHub" que baixa a lista de jogos disponíveis do GitHub Pages (`games.json`).
+  - Seleção múltipla com checkboxes (inclui "Selecionar todos") e download sequencial com progresso.
+  - Jogos são baixados do GitHub Releases (`https://github.com/Kelvin-RBS/Launcher-HY300-prototipo/releases/download/...`) direto para `/storage/emulated/0/Jogos/{sistema}/`.
+  - Verificação de integridade via SHA-256 após cada download.
+  - Script `scripts/07-gerar-games-json.ps1` para gerar o catálogo automaticamente.
+  - Exemplo de catálogo em `docs/exemplos/games.example.json`.
+  - **Removido:** servidor HTTP local (GameServer), página web de envio (`gerenciador.html`), PIN de acesso, upload pela rede.
+  - Nova dependência: OkHttp 4.12.0.
+  - Mantidos: renomear e excluir jogos locais.
+
 ## v25
 - App Jogos 0.5.0: **Gerenciar jogos** (engrenagem > Gerenciar jogos), a quarta opção do menu de Configurações.
   - **Renomear** com teclado na tela; a extensão é mantida e o save e o estado salvo acompanham o nome.

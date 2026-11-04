@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "updatedAt": "2026-01-01T00:00:00Z",
+  "games": [
+    {
+      "id": "snes-smw",
+      "title": "Super Mario World",
+      "system": "snes",
+      "fileName": "Super Mario World.sfc",
+      "size": 524288,
+      "sha256": "SUBSTITUA_PELO_SHA256_DO_ARQUIVO",
+      "version": "v1.0",
+      "description": "Clássico do Super Nintendo"
+    },
+    {
+      "id": "snes-dkc",
+      "title": "Donkey Kong Country",
+      "system": "snes",
+      "fileName": "Donkey Kong Country.sfc",
+      "size": 1048576,
+      "sha256": "SUBSTITUA_PELO_SHA256_DO_ARQUIVO",
+      "version": "v1.0",
+      "description": "Plataforma da Rare"
+    },
+    {
+      "id": "snes-dkc2",
+      "title": "Donkey Kong Country 2",
+      "system": "snes",
+      "fileName": "Donkey Kong Country 2.sfc",
+      "size": 1048576,
+      "sha256": "SUBSTITUA_PELO_SHA256_DO_ARQUIVO",
+      "version": "v1.0",
+      "description": "Continuação do DKC"
+    },
+    {
+      "id": "snes-smk",
+      "title": "Super Mario Kart",
+      "system": "snes",
+      "fileName": "Super Mario Kart.sfc",
+      "size": 1048576,
+      "sha256": "SUBSTITUA_PELO_SHA256_DO_ARQUIVO",
+      "version": "v1.0",
+      "description": "Corrida clássica"
+    },
+    {
+      "id": "nes-smb3",
+      "title": "Super Mario Bros. 3",
+      "system": "nes",
+      "fileName": "Super Mario Bros. 3.nes",
+      "size": 393216,
+      "sha256": "SUBSTITUA_PELO_SHA256_DO_ARQUIVO",
+      "version": "v1.0",
+      "description": "Clássico do NES"
+    }
+  ]
+}
