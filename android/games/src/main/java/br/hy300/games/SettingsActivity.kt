@@ -86,7 +86,7 @@ class SettingsActivity : NavActivity() {
 
         col.addView(label("EMULADOR", 11f, "#A9B8D2", 16))
         col.addView(label(engineText(), 15f, "#EAF1FF", 4))
-        col.addView(label("Durante o jogo: Select + Start abre o menu; segurar Start por 3 segundos pergunta se quer fechar o jogo e voltar à lista.", 13f, "#A9B8D2", 4))
+        col.addView(label("Durante o jogo: segure Select + Start para abrir o menu (continuar, reiniciar, salvar e carregar estado, sair para a lista de jogos).", 13f, "#A9B8D2", 4))
 
         val buttons = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL

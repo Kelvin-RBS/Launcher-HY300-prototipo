@@ -10,6 +10,7 @@ import android.media.AudioTrack
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.Gravity
 import android.view.InputDevice
 import android.view.KeyEvent
@@ -28,6 +29,7 @@ import java.io.File
 /**
  * Motor próprio: roda o jogo com o núcleo do Snes9x, sem controles de toque.
  * Menu em português: segure Select + Start (ou Voltar / botão Guide) para abrir.
+ * Segurar só o Start não faz mais nada (o jogo usa o Start normalmente).
  */
 class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
 
@@ -43,11 +45,13 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
     private lateinit var root: FrameLayout
     private lateinit var surfaceView: SurfaceView
     private lateinit var menu: LinearLayout
-    private lateinit var confirm: LinearLayout
-    private lateinit var noButton: View
+    private lateinit var statusView: TextView   // retorno dentro do menu (Salvando... / Salvo!)
     private lateinit var messageView: TextView
     private lateinit var fpsView: TextView
     private val hideMessage = Runnable { messageView.visibility = View.GONE }
+    private val hideStatus = Runnable { statusView.visibility = View.INVISIBLE }
+    private val fileLock = Any()                  // um arquivo de save por vez (UI e thread do emulador)
+    @Volatile private var saving = false
 
     @Volatile private var running = false
     @Volatile private var paused = false
@@ -69,7 +73,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         buildUi()
         running = true
         thread = Thread({ emuLoop() }, "emu").also { it.start() }
-        say("Select + Start: menu  \u00B7  segure Start por 3 s: fechar o jogo")
+        say("Segure Select + Start para abrir o menu")
     }
 
     override fun onResume() {
@@ -82,7 +86,20 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
     override fun onPause() {
         super.onPause()
         paused = true
+        releaseButtons()
         if (coreReady) saveSram()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) hideSystemBars() else releaseButtons()
+    }
+
+    /** Solta todos os botões: sem isso, um botão preso (o aviso de soltar se perdeu) ficaria apertado no jogo. */
+    private fun releaseButtons() {
+        keyMask = 0
+        axisMask = 0
+        padMask = 0
     }
 
     override fun onDestroy() {
@@ -150,7 +167,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         }
         addItem("Continuar") { closeMenu() }
         addItem("Reiniciar") {
-            synchronized(lock) { NativeEmu.reset() }
+            synchronized(lock) { if (coreReady) NativeEmu.reset() }
             closeMenu()
         }
         addItem("Salvar estado") { saveState() }
@@ -158,34 +175,17 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         addItem("Ajustes") { startActivity(android.content.Intent(this, EmulatorSettingsActivity::class.java)) }
         addItem("Diagnóstico de atraso") { showDiagnostic() }
         addItem("Sair para a lista de jogos") { finish() }
-        root.addView(menu, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
-
-        // Pergunta "Fechar o jogo?" (abre ao segurar Start por 3 segundos)
-        confirm = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
-            setBackgroundColor(Color.argb(240, 6, 10, 20))
-            setPadding(dp(30), dp(22), dp(30), dp(22))
-            visibility = View.GONE
+        // Linha de retorno (reserva o espaço: o menu não "pula" quando a mensagem aparece)
+        statusView = TextView(this).apply {
+            text = " "
+            textSize = 16f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            setPadding(0, dp(12), 0, 0)
+            visibility = View.INVISIBLE
         }
-        confirm.addView(TextView(this).apply {
-            text = "Fechar o jogo?"
-            textSize = 24f
-            gravity = Gravity.CENTER
-            setTextColor(Color.parseColor("#EAF1FF"))
-        })
-        confirm.addView(TextView(this).apply {
-            text = game.title + "\nO save do jogo é mantido. Estados não salvos serão perdidos."
-            textSize = 14f
-            gravity = Gravity.CENTER
-            setTextColor(Color.parseColor("#C5D2EA"))
-            setPadding(0, dp(8), 0, dp(6))
-        })
-        noButton = Ui.focusButton(this, "Não, continuar") { closeMenu() }
-        confirm.addView(noButton, LinearLayout.LayoutParams(dp(300), ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(10) })
-        confirm.addView(Ui.focusButton(this, "Sim, fechar o jogo") { finish() },
-            LinearLayout.LayoutParams(dp(300), ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
-        root.addView(confirm, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
+        menu.addView(statusView, LinearLayout.LayoutParams(dp(280), ViewGroup.LayoutParams.WRAP_CONTENT))
+        root.addView(menu, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
 
         setContentView(root)
     }
@@ -220,33 +220,33 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         if (menuVisible) return
         menuVisible = true
         paused = true
-        keyMask = 0
-        axisMask = 0
-        padMask = 0
+        releaseButtons()
         if (coreReady) saveSram()
+        ui.removeCallbacks(hideStatus)
+        statusView.visibility = View.INVISIBLE
         menu.visibility = View.VISIBLE
         quiet()
         menu.getChildAt(1).requestFocus()
     }
 
-    private fun openCloseDialog() {
-        if (menuVisible) return
-        menuVisible = true
-        paused = true
-        keyMask = 0
-        axisMask = 0
-        padMask = 0
-        if (coreReady) saveSram()
-        confirm.visibility = View.VISIBLE
-        quiet()
-        noButton.requestFocus()
-    }
-
     private fun closeMenu() {
-        confirm.visibility = View.GONE
         menu.visibility = View.GONE
         menuVisible = false
         paused = false
+    }
+
+    /** Retorno dentro do menu (a mensagem de baixo da tela fica escondida atrás dele). */
+    private fun showStatus(text: String, color: String, autoHideMs: Long = 0L) {
+        statusView.text = text
+        statusView.setTextColor(Color.parseColor(color))
+        statusView.visibility = View.VISIBLE
+        ui.removeCallbacks(hideStatus)
+        if (autoHideMs > 0L) ui.postDelayed(hideStatus, autoHideMs)
+    }
+
+    /** Mostra o aviso onde dá para ver: dentro do menu, se ele está aberto; senão, embaixo da tela. */
+    private fun tell(text: String, color: String) {
+        if (menuVisible) showStatus(text, color, 3000L) else say(text)
     }
 
     // ------------------------------------------------------------------ saves
@@ -263,33 +263,73 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         return File(dir, game.file.nameWithoutExtension + ".srm")
     }
 
+    /** Grava num arquivo temporário e só então troca pelo definitivo: uma falha no meio não estraga o save antigo. */
+    private fun writeAtomic(target: File, data: ByteArray) {
+        synchronized(fileLock) {
+            val tmp = File(target.parentFile, target.name + ".tmp")
+            try {
+                tmp.writeBytes(data)
+                if (!tmp.renameTo(target)) {
+                    target.delete()
+                    if (!tmp.renameTo(target)) throw java.io.IOException("não foi possível trocar o arquivo")
+                }
+            } catch (e: Exception) {
+                tmp.delete()
+                throw e
+            }
+        }
+    }
+
     private fun saveSram() {
         val data = synchronized(lock) { if (coreReady) NativeEmu.sram() else null } ?: return
         try {
-            sramFile().writeBytes(data)
+            writeAtomic(sramFile(), data)
         } catch (e: Exception) {
             // sem espaço ou sem permissão: ignora
         }
     }
 
+    /** Salvar estado: mostra "Salvando..." e, quando termina, "Salvo!" (ou o erro). */
     private fun saveState() {
-        val data = synchronized(lock) { if (coreReady) NativeEmu.serializeState() else null }
-        if (data == null) {
-            say("Não foi possível salvar")
-            return
-        }
-        try {
-            stateFile().writeBytes(data)
-            say("Estado salvo")
-        } catch (e: Exception) {
-            say("Não foi possível salvar")
-        }
+        if (saving) return
+        saving = true
+        showStatus("Salvando...", "#FFD166")
+        val started = SystemClock.uptimeMillis()
+        Thread({
+            var ok = false
+            try {
+                val data = synchronized(lock) { if (coreReady) NativeEmu.serializeState() else null }
+                if (data != null) {
+                    writeAtomic(stateFile(), data)
+                    ok = true
+                }
+            } catch (e: Exception) {
+                ok = false
+            }
+            // O estado é pequeno e salva num instante: segura "Salvando..." um pouco para dar tempo de ler
+            val wait = 600L - (SystemClock.uptimeMillis() - started)
+            if (wait > 0L) {
+                try {
+                    Thread.sleep(wait)
+                } catch (e: InterruptedException) {
+                    // segue
+                }
+            }
+            ui.post {
+                saving = false
+                if (ok) {
+                    if (menuVisible) showStatus("Salvo!", "#3ECF8E", 2500L) else say("Estado salvo")
+                } else {
+                    tell("Não foi possível salvar", "#EF5B5B")
+                }
+            }
+        }, "save-state").start()
     }
 
     private fun loadState() {
         val f = stateFile()
         if (!f.isFile) {
-            say("Nenhum estado salvo")
+            tell("Nenhum estado salvo", "#FFD166")
             return
         }
         val ok = try {
@@ -302,7 +342,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
             closeMenu()
             say("Estado carregado")
         } else {
-            say("Não foi possível carregar")
+            tell("Não foi possível carregar", "#EF5B5B")
         }
     }
 
@@ -505,7 +545,6 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         var worstMs = 0.0          // quadro de emulação mais lento no último segundo
         var lastUnderruns = -1     // -1 = ainda sem referência (ignora a falha natural do início)
         var comboSince = 0L
-        var startSince = 0L
         while (running) {
             if (paused) {
                 if (!wasPaused) {
@@ -530,6 +569,7 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
                 probe.resetFramePeriod()
                 audio.play()
                 wasPaused = false
+                comboSince = 0L
                 lastUnderruns = -1
             }
             val mask = padMask
@@ -546,19 +586,6 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
                 }
             } else {
                 comboSince = 0L
-            }
-            // Start segurado sozinho por 3 segundos: pergunta se quer fechar o jogo
-            if ((mask and START_BIT) != 0 && (mask and SELECT_BIT) == 0) {
-                val now = System.nanoTime()
-                if (startSince == 0L) {
-                    startSince = now
-                } else if (now - startSince > 3_000_000_000L) {
-                    startSince = 0L
-                    ui.post { openCloseDialog() }
-                    continue
-                }
-            } else {
-                startSince = 0L
             }
             val t0 = System.nanoTime()
             val n = synchronized(lock) {

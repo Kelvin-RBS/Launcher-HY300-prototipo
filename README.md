@@ -23,7 +23,7 @@ O HY300 já projeta uma imagem grande em qualquer parede. Falta um sistema à al
 
 - **Tela inicial limpa**, com atalhos de apps, relógio e acesso rápido a rede, Bluetooth e configurações.
 - **Gerenciar jogos** no app de jogos: renomear, excluir e receber jogos pelo celular ou computador na mesma rede ([`docs/17`](docs/17-gerenciar-jogos.md)).
-- **Jogos retrô de 16 bits** (começando pelo Super Nintendo) em um **app próprio de jogos**, com o visual do launcher e um **motor próprio** (núcleo Snes9x), sem controle de toque e compatível com controles Bluetooth em geral. Durante o jogo, **segurar Start por 3 segundos** pergunta se quer fechar o jogo e voltar à lista.
+- **Jogos retrô de 16 bits** (começando pelo Super Nintendo) em um **app próprio de jogos**, com o visual do launcher e um **motor próprio** (núcleo Snes9x), sem controle de toque e compatível com controles Bluetooth em geral. Durante o jogo, **segurar Select + Start** abre o menu de pausa (continuar, reiniciar, salvar e carregar estado, sair para a lista).
 - **Consoles e PC pelo HDMI**, com a entrada a um clique.
 - **Controle Bluetooth ou USB** para jogar (o controle remoto do projetor só tem direcional e OK).
 - **Reversível por enquanto:** o launcher é instalado como app comum. A ideia futura é **trocar o firmware**.

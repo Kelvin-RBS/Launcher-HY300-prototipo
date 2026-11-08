@@ -213,7 +213,15 @@ class HomeActivity : NavActivity() {
         // Atalhos fixos: não podem ser removidos nem movidos
         addFixed("Jogos", "Jogos retrô de 16 bits.", "#6A4FB3", R.drawable.ic_gamepad, 6) {
             val gamesIntent = AppRepo.launchIntent(packageManager, "br.hy300.games")
-            if (gamesIntent == null) toast("Instale o app Jogos HY300") else startActivity(gamesIntent)
+            if (gamesIntent == null) {
+                toast("Instale o app Jogos HY300")
+            } else {
+                try {
+                    startActivity(gamesIntent)
+                } catch (e: Exception) {
+                    toast("Não foi possível abrir")
+                }
+            }
         }
         addFixed("Arquivos", "Armazenamento interno e pendrive.", "#8A6A2F", R.drawable.ic_folder, 20) {
             launch("com.softwinner.TvdFileManager")

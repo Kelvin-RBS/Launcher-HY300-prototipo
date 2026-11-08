@@ -117,6 +117,14 @@ class AppsActivity : NavActivity() {
         if (grid.selectedItemPosition < 0 && apps.isNotEmpty()) grid.setSelection(0)
     }
 
+    override fun onPause() {
+        super.onPause()
+        // Sair da tela (ex.: abriu a pergunta de desinstalar) cancela o "segurar OK" pendente
+        holdRunnable?.let { handler.removeCallbacks(it) }
+        holdRunnable = null
+        holdFired = false
+    }
+
     private fun handleOk(event: KeyEvent) {
         val position = grid.selectedItemPosition
         if (event.action == KeyEvent.ACTION_DOWN) {

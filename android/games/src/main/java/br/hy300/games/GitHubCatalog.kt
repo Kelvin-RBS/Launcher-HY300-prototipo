@@ -89,11 +89,12 @@ object GitHubCatalog {
 
     /**
      * Verifica se há atualização no repositório: compara o SHA do último commit com o do cache.
+     * Devolve true (há novidade), false (já está atualizado) ou null (não foi possível verificar).
      * (O ETag NÃO é o SHA do commit, então a comparação antiga sempre dava "mudou".)
      */
-    fun checkForUpdate(ctx: Context): Boolean {
+    fun checkForUpdate(ctx: Context): Boolean? {
         val meta = readCacheMeta(ctx) ?: return true // sem cache = precisa buscar
-        val sha = fetchCommitSha() ?: return false   // sem rede/limite: mantém o que já tem
+        val sha = fetchCommitSha() ?: return null    // null = não deu para verificar (sem rede ou limite da API)
         return sha != meta.commitSha
     }
 
@@ -407,7 +408,7 @@ object GitHubCatalog {
                     sha256 = g.getString("sha256"),
                     version = g.getString("version"),
                     downloadUrl = g.getString("downloadUrl"),
-                    description = g.optString("description").takeIf { it.isNotBlank() }
+                    description = if (g.isNull("description")) null else g.optString("description").takeIf { it.isNotBlank() }
                 ))
             }
             GameCatalog(version, updatedAt, games)

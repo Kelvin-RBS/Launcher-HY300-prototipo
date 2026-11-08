@@ -1,5 +1,17 @@
 # Changelog
 
+## v27
+- App Jogos 0.6.1: **menu de pausa**.
+  - **Removido o "segurar Start por 3 segundos"** (pergunta "Fechar o jogo?"). Fica só **segurar Select + Start** (ou Voltar / botão Guide) para abrir o menu; para sair, use "Sair para a lista de jogos".
+  - **Salvar estado agora dá retorno:** mostra "Salvando..." e depois "Salvo!" dentro do menu (antes a mensagem aparecia embaixo da tela, escondida atrás do menu, e parecia que não acontecia nada). Erros ("Não foi possível salvar", "Nenhum estado salvo", "Não foi possível carregar") também aparecem dentro do menu.
+- Correções de bugs (App Jogos):
+  - Os saves (SRAM e estado) agora são gravados num arquivo temporário e só então trocados pelo definitivo: uma falha ou o app fechando no meio não estraga mais o save antigo. A gravação também não é mais feita na tela (thread própria).
+  - Botões **presos** no jogo: se a tela perdia o foco ou o app ia para o segundo plano com um botão apertado, o aviso de soltar se perdia e o botão ficava apertado ao voltar. Agora todos os botões são soltos nesse caso.
+  - **Reiniciar** no menu chamava o núcleo mesmo antes de ele estar pronto; agora só reinicia com o jogo carregado.
+  - Gerenciar jogos: ao tocar em **Baixar**, a janela fechava e religava os botões e a mensagem como se não houvesse download em andamento. Agora o estado "Baixando..." é mantido.
+  - Gerenciar jogos: **Atualizar** dizia "Catálogo já está atualizado" quando na verdade não conseguiu verificar (sem rede ou limite da API do GitHub). Agora diz que não foi possível verificar.
+  - Catálogo do GitHub: a descrição vazia do cache era lida como o texto "null".
+
 ## v26
 - App Jogos (correção): **busca de catálogo no GitHub** (bsnesemulator/SNES-ROMS) voltava vazia. O filtro comparava o sistema com extensões de arquivo e descartava todos os jogos; a listagem usava a API "contents" (limite de 1000 itens, sem paginação); a checagem de atualização comparava ETag com SHA. Agora lista o repo inteiro via `git/trees?recursive=1`, usa cache (e cai no cache se a API limitar), monta a URL de download com codificação correta e a tela usa lista leve com busca pelo teclado na tela.
 - App Jogos 0.6.0: **Download de jogos do GitHub** substituindo o envio pela rede.

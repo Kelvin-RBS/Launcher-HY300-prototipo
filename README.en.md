@@ -22,7 +22,7 @@ The HY300 already projects a big image on any wall. What is missing is a system 
 
 - **Clean home screen**, with app shortcuts, a clock and quick access to network, Bluetooth and settings.
 - **Game management** in the games app: rename, delete and receive games from a phone or computer on the same network ([`docs/17`](docs/17-gerenciar-jogos.md), in Portuguese).
-- **Retro 16-bit games** (starting with the Super Nintendo) in a **dedicated games app** with the launcher's look and its **own engine** (Snes9x core), no touch controls, compatible with Bluetooth controllers in general. During a game, **holding Start for 3 seconds** asks whether to close the game and go back to the list.
+- **Retro 16-bit games** (starting with the Super Nintendo) in a **dedicated games app** with the launcher's look and its **own engine** (Snes9x core), no touch controls, compatible with Bluetooth controllers in general. During a game, **holding Select + Start** opens the pause menu (resume, restart, save and load state, exit to the list).
 - **Consoles and PCs through HDMI**, one click away.
 - **Bluetooth or USB controller** for playing (the projector's remote only has a D-pad and OK).
 - **Reversible for now:** the launcher is installed as a regular app. The future plan is to **replace the firmware**.
