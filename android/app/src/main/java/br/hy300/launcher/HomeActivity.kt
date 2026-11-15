@@ -213,7 +213,15 @@ class HomeActivity : NavActivity() {
         // Atalhos fixos: não podem ser removidos nem movidos
         addFixed("Jogos", "Jogos retrô de 16 bits.", "#6A4FB3", R.drawable.ic_gamepad, 6) {
             val gamesIntent = AppRepo.launchIntent(packageManager, "br.hy300.games")
-            if (gamesIntent == null) toast("Instale o app Jogos HY300") else startActivity(gamesIntent)
+            if (gamesIntent == null) {
+                toast("Instale o app Jogos HY300")
+            } else {
+                try {
+                    startActivity(gamesIntent)
+                } catch (e: Exception) {
+                    toast("Não foi possível abrir")
+                }
+            }
         }
         addFixed("Arquivos", "Armazenamento interno e pendrive.", "#8A6A2F", R.drawable.ic_folder, 20) {
             launch("com.softwinner.TvdFileManager")
@@ -224,9 +232,41 @@ class HomeActivity : NavActivity() {
         addFixed("Gerenciar atalhos", "Adicione ou remova os atalhos da tela inicial.", "#4A5568", R.drawable.ic_sliders, 20) {
             startActivity(Intent(this, ManageActivity::class.java))
         }
+        focusFirstShortcut()
+    }
+
+    /**
+     * Coloca o cursor no primeiro atalho da fileira (e não no botão de Rede, que vem antes na tela).
+     *
+     * Só chamar requestFocus() aqui não basta: na primeira abertura a tela ainda não foi desenhada
+     * (e, em "modo toque", o pedido é ignorado). Então são três camadas:
+     *  1) "foco padrão": é o item que o Android escolhe sozinho quando ninguém tem foco
+     *     (primeira exibição, ou ao sair do modo toque com o primeiro aperto do direcional);
+     *  2) pedido de foco imediato;
+     *  3) pedido de foco de novo logo depois do primeiro desenho, caso o Android tenha
+     *     colocado o foco no topo nesse meio tempo.
+     */
+    private fun focusFirstShortcut() {
+        val first = firstCard ?: return
+        first.isFocusedByDefault = true
         // O foco inicial é colocado por código: sem tique
-        quiet()
-        firstCard?.requestFocus()
+        quiet(700)
+        first.requestFocus()
+        first.post {
+            if (!isInRow(currentFocus)) {
+                quiet(700)
+                first.requestFocus()
+            }
+        }
+    }
+
+    private fun isInRow(v: View?): Boolean {
+        var p = v?.parent
+        while (p != null) {
+            if (p === track) return true
+            p = p.parent
+        }
+        return false
     }
 
     private fun addApp(a: AppEntry) {
