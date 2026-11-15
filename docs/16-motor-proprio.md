@@ -21,11 +21,11 @@ O app descobre o sistema pela extensão (`.sfc`, `.smc`... ou `.nes`) ou pelo qu
 - **ROMs em `.zip`:** o app abre o zip e extrai a ROM de dentro. Zips sem ROM de Super Nintendo (como o de NES) não aparecem na lista.
 - **Save do jogo (SRAM)** é gravado ao pausar e ao sair, e **um estado salvo** por jogo.
 
-## Fechar o jogo com o controle conectado
-- **Segure Start por 3 segundos:** aparece a pergunta **"Fechar o jogo?"** com **"Não, continuar"** (já selecionado) e **"Sim, fechar o jogo"**. Se escolher Sim, o jogo fecha e volta à lista do app de jogos. O save do jogo é mantido.
+## Menu e fechar o jogo com o controle conectado
+- **Segurar só o Start não faz mais nada** (a pergunta "Fechar o jogo?" foi removida; o Start fica livre para o jogo). Para sair, use o menu.
 - **Segure Select + Start por cerca de 1 segundo** (ou aperte Voltar ou o botão Guide): abre o menu completo com **Continuar · Reiniciar · Salvar estado · Carregar estado · Ajustes · Sair para a lista de jogos**.
 
-No menu e na pergunta, o direcional navega, A confirma e B volta. Observação: enquanto você segura Start, o próprio jogo recebe o botão Start e pode pausar. Se escolher "Não, continuar", aperte Start de novo.
+No menu, o direcional navega, A confirma e B volta. **Salvar estado** mostra **"Salvando..."** e, quando termina, **"Salvo!"** na própria linha de baixo do menu (se der erro, avisa em vermelho). **Carregar estado** sem nada salvo também avisa dentro do menu.
 
 ## Ajustes (Configurações > Ajustes do emulador)
 Proporção da tela (4:3, 8:7 ou tela cheia), botões do controle (por posição, estilo Xbox, ou por rótulo, estilo Nintendo), latência do áudio e mostrar quadros por segundo. Não há opções de toque.
@@ -64,7 +64,7 @@ Como usar: jogue uns 30 segundos apertando botões e mexendo no direcional e no 
 Limites: o diagnóstico **não mede** o rádio Bluetooth do controle nem o processamento de imagem do projetor. O número "aperto até a imagem" é uma estimativa (inclui ~1,5 quadro de tela). Para separar o que sobra, compare com um controle com fio e desligue efeitos de imagem do projetor.
 
 ## O que foi testado
-- **No projetor (testado pelo autor):** o motor próprio abre o jogo com o núcleo `snes9x2010`, o menu de pausa (Select + Start), a pergunta "Fechar o jogo?" (segurar Start por 3 s), os ajustes e o reconhecimento de um controle Xbox Bluetooth funcionam.
+- **No projetor (testado pelo autor):** o motor próprio abre o jogo com o núcleo `snes9x2010`, o menu de pausa (Select + Start), os ajustes e o reconhecimento de um controle Xbox Bluetooth funcionam.
 - A lógica do C++ foi testada **no computador** com um núcleo libretro falso: carregar o núcleo, entrada, áudio, estado e save passaram.
 - O conversor de áudio foi testado no computador (razão exata de taxa; erro de 0,02% contra uma senoide) e o motor C++ rodou 600 quadros com um núcleo falso.
 - O código Kotlin **não foi compilado** e as mudanças da v20 não rodaram no projetor ainda.

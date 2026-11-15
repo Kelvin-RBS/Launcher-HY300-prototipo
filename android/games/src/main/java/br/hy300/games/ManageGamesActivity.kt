@@ -258,6 +258,8 @@ class ManageGamesActivity : NavActivity() {
             }
             .setNegativeButton("Cancelar", null)
             .setOnDismissListener {
+                // Ao tocar em "Baixar" a janela fecha DEPOIS de o download começar: não desfaz o estado de download
+                if (isDownloading) return@setOnDismissListener
                 searchButton.isEnabled = true
                 updateButton.isEnabled = true
                 searchButton.text = "Buscar catálogo"
@@ -389,7 +391,10 @@ class ManageGamesActivity : NavActivity() {
                 ioExecutor.execute {
                     val hasUpdate = GitHubCatalog.checkForUpdate(this@ManageGamesActivity)
                     ui.post {
-                        if (hasUpdate) {
+                        if (hasUpdate == null) {
+                            statusText.text = "Não foi possível verificar agora (sem rede ou limite do GitHub). Tente de novo mais tarde."
+                            statusText.setTextColor(Color.parseColor("#EF5B5B"))
+                        } else if (hasUpdate) {
                             statusText.text = "Nova versão no repo. Baixando catálogo atualizado..."
                             statusText.setTextColor(Color.parseColor("#A9B8D2"))
                             loadCatalog(true)

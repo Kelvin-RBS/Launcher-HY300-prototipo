@@ -182,13 +182,13 @@ class EmulatorActivity : NavActivity(), SurfaceHolder.Callback {
         // Linha de retorno (reserva o espaço: o menu não "pula" quando a mensagem aparece)
         statusView = TextView(this).apply {
             text = " "
-            textSize = 14.5f
+            textSize = 16f
             gravity = Gravity.CENTER
             setTextColor(Color.WHITE)
-            setPadding(0, dp(10), 0, 0)
+            setPadding(0, dp(12), 0, 0)
             visibility = View.INVISIBLE
         }
-        menu.addView(statusView, LinearLayout.LayoutParams(dp(250), ViewGroup.LayoutParams.WRAP_CONTENT))
+        menu.addView(statusView, LinearLayout.LayoutParams(dp(280), ViewGroup.LayoutParams.WRAP_CONTENT))
         root.addView(menu, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
 
         setContentView(root)
