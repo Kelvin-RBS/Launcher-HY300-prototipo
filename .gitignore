@@ -8,6 +8,16 @@ tv_input.txt
 *.png
 !prototype/assets/*
 
+# Executáveis e segredos genéricos
+*.exe
+*.pem
+*.p12
+*.pfx
+*.key
+.env
+.env.*
+*.log
+
 # Chaves de assinatura e configuração local do Android: NUNCA publicar
 *.jks
 *.keystore
